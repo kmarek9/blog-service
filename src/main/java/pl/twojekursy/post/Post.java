@@ -28,14 +28,13 @@ public class Post {
 
     }
 
-    public Post(Long id, String text, LocalDateTime createdDate, PostScope scope, String author, LocalDateTime publicationDate, PostStatus status) {
-        this.id = id;
+    public Post(String text, PostScope scope, String author, LocalDateTime publicationDate) {
         this.text = text;
-        this.createdDate = createdDate;
+        this.createdDate = LocalDateTime.now();
         this.scope = scope;
         this.author = author;
         this.publicationDate = publicationDate;
-        this.status = status;
+        this.status = PostStatus.ACTIVE;
     }
 
     public void setId(Long id) {
