@@ -32,13 +32,12 @@ public class Invoice {
     public Invoice() {
     }
 
-    public Invoice(Long id, LocalDateTime createdDate, LocalDate paymentDate, String buyer, String seller, InvoiceStatus status) {
-        this.id = id;
-        this.createdDate = createdDate;
+    public Invoice(LocalDate paymentDate, String buyer, String seller) {
+        this.createdDate = LocalDateTime.now();
         this.paymentDate = paymentDate;
         this.buyer = buyer;
         this.seller = seller;
-        this.status = status;
+        this.status = InvoiceStatus.ACTIVE;
     }
 
     public void setId(Long id) {
