@@ -1,31 +1,42 @@
 package pl.twojekursy.invoice;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 public class Invoice {
-    //zad dom
-    //stworzyc InvoiceRepository
-    //stworzyć InvoiceController
-    //stworzyć w kontrolerze metody create (POST) i read (GET)
-    //w creatcie stworzyć  20 encji Invoice i zapisac do bazy
-    // w read, odczytać po ID,  usunać po ID i encji, wyszukać wszytkie, zupdatować
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // wymagane
+    @NotNull
     private LocalDateTime createdDate;
 
+    // wymagane
+    @NotNull
     private LocalDate paymentDate;
 
+    // wymagane, notblank, max 150 znakow
+    @NotNull
+    @NotBlank
+    @Size(max = 150)
     private String buyer;
 
+    // wymagane, notblank,  max 150 znakow
+    @NotNull
+    @NotBlank
+    @Size(max = 150)
     private String seller;
 
+    //wymagane
+    @NotNull
     @Enumerated(EnumType.STRING)
     private InvoiceStatus status;
 

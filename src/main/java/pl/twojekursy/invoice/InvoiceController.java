@@ -1,5 +1,6 @@
 package pl.twojekursy.invoice;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,7 +14,7 @@ public class InvoiceController {
     }
 
     @PostMapping
-    public void create(@RequestBody CreateInvoiceRequest invoiceRequest){
+    public void create(@Valid @RequestBody CreateInvoiceRequest invoiceRequest){
         invoiceService.create(invoiceRequest);
     }
 
