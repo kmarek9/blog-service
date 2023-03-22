@@ -1,11 +1,16 @@
 package pl.twojekursy.post;
 
+import jakarta.validation.Valid;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -24,7 +29,7 @@ public class PostController {
     }
 
     @PostMapping
-    public void create(@RequestBody CreatePostRequest postRequest){
+    public void create(@Valid @RequestBody CreatePostRequest postRequest){
         postService.create(postRequest);
     }
 }
