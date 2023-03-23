@@ -11,6 +11,10 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Version
+    @NotNull
+    private Integer version;
+
     @NotBlank
     @NotNull
     @Size(max = 5000)
@@ -37,6 +41,17 @@ public class Post {
 
     public Post(){
 
+    }
+
+    public Post(Post old){
+        this.id = old.id;
+        this.version = old.version;
+        this.text = old.text;
+        this.createdDate = old.createdDate;
+        this.scope = old.scope;
+        this.author = old.author;
+        this.publicationDate = old.publicationDate;
+        this.status = old.status;
     }
 
     public Post(String text, PostScope scope, String author, LocalDateTime publicationDate) {
@@ -78,6 +93,14 @@ public class Post {
 
     public Long getId() {
         return id;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     public String getText() {

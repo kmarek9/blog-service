@@ -1,6 +1,7 @@
 package pl.twojekursy.post;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.OptimisticLockException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -35,9 +36,11 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
 
-        post.setText(updatePostRequest.getText());
-        post.setScope(updatePostRequest.getScope());
+        Post newPost = new Post(post);
+        newPost.setText(updatePostRequest.getText());
+        newPost.setScope(updatePostRequest.getScope());
+        newPost.setVersion(updatePostRequest.getVersion());
 
-        postRepository.save(post);
+        postRepository.save(newPost);
     }
 }

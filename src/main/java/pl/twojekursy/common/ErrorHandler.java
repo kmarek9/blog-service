@@ -1,8 +1,10 @@
 package pl.twojekursy.common;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -48,4 +50,10 @@ public class ErrorHandler {
     public ResponseEntity<Void> handleNotFoundExceptions(RuntimeException ex){
         return ResponseEntity.notFound().build();
     }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<Void> handleObjectOptimisticLock(ObjectOptimisticLockingFailureException ex){
+        return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    }
+
 }
