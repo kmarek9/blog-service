@@ -1,6 +1,9 @@
 package pl.twojekursy.post;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class PostService {
@@ -20,5 +23,11 @@ public class PostService {
         );
 
         postRepository.save(post);
+    }
+
+    public ReadPostResponse findById(Long id) {
+        return postRepository.findById(id)
+                .map(ReadPostResponse::from)
+                .orElseThrow(EntityNotFoundException::new);
     }
 }

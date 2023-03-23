@@ -76,6 +76,34 @@ public class Post {
         this.status = status;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public PostScope getScope() {
+        return scope;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public LocalDateTime getPublicationDate() {
+        return publicationDate;
+    }
+
+    public PostStatus getStatus() {
+        return status;
+    }
+
     @Override
     public String toString() {
         return "Post{" +

@@ -1,16 +1,8 @@
 package pl.twojekursy.post;
 
 import jakarta.validation.Valid;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -23,9 +15,9 @@ public class PostController {
     }
 
 
-    @GetMapping
-    public void read(){
-
+    @GetMapping("/{id}")
+    public ResponseEntity<ReadPostResponse> read(@PathVariable("id") Long id){
+        return ResponseEntity.ok(postService.findById(id));
     }
 
     @PostMapping
