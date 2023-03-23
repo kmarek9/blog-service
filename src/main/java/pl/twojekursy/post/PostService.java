@@ -30,4 +30,14 @@ public class PostService {
                 .map(ReadPostResponse::from)
                 .orElseThrow(EntityNotFoundException::new);
     }
+
+    public void update(Long id, UpdatePostRequest updatePostRequest) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+
+        post.setText(updatePostRequest.getText());
+        post.setScope(updatePostRequest.getScope());
+
+        postRepository.save(post);
+    }
 }
