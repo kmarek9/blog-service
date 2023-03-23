@@ -1,6 +1,9 @@
 package pl.twojekursy.invoice;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class InvoiceService {
@@ -19,5 +22,11 @@ public class InvoiceService {
         ) ;
 
         invoiceRepository.save(invoice);
+    }
+
+    public ReadInvoiceResponse findById(Long id) {
+        return invoiceRepository.findById(id)
+                .map(ReadInvoiceResponse::from)
+                .orElseThrow(EntityNotFoundException::new);
     }
 }

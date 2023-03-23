@@ -1,6 +1,7 @@
 package pl.twojekursy.invoice;
 
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,8 +19,8 @@ public class InvoiceController {
         invoiceService.create(invoiceRequest);
     }
 
-    @GetMapping
-    public void read(){
-
+    @GetMapping("/{id}")
+    public ResponseEntity<ReadInvoiceResponse> read(@PathVariable("id") Long id){
+        return ResponseEntity.ok(invoiceService.findById(id));
     }
 }
