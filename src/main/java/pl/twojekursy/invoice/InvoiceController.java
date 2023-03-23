@@ -23,4 +23,10 @@ public class InvoiceController {
     public ResponseEntity<ReadInvoiceResponse> read(@PathVariable("id") Long id){
         return ResponseEntity.ok(invoiceService.findById(id));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(@PathVariable("id") Long id, @Valid @RequestBody UpdateInvoiceRequest updateInvoiceRequest){
+        invoiceService.update(id, updateInvoiceRequest);
+        return ResponseEntity.ok().build();
+    }
 }
