@@ -34,10 +34,13 @@ public class InvoiceService {
         Invoice invoice = invoiceRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
 
-        invoice.setPaymentDate(updateInvoiceRequest.paymentDate());
-        invoice.setSeller(updateInvoiceRequest.seller());
-        invoice.setBuyer(updateInvoiceRequest.buyer());
+        Invoice newInvoice = new Invoice(invoice);
 
-        invoiceRepository.save(invoice);
+        newInvoice.setPaymentDate(updateInvoiceRequest.paymentDate());
+        newInvoice.setSeller(updateInvoiceRequest.seller());
+        newInvoice.setBuyer(updateInvoiceRequest.buyer());
+        newInvoice.setVersion(updateInvoiceRequest.version());
+
+        invoiceRepository.save(newInvoice);
     }
 }
