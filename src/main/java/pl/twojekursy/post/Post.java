@@ -2,6 +2,8 @@ package pl.twojekursy.post;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -10,6 +12,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Audited
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +42,7 @@ public class Post {
     @NotBlank
     @NotNull
     @Size(max = 100)
+    @NotAudited
     private String author;
 
     @FutureOrPresent
