@@ -43,4 +43,17 @@ public class PostService {
 
         postRepository.save(newPost);
     }
+
+    public void delete(Long id) {
+        postRepository.deleteById(id);
+    }
+
+    public void archive(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+
+        Post newPost = new Post(post);
+        newPost.setStatus(PostStatus.DELETED);
+        postRepository.save(newPost);
+    }
 }

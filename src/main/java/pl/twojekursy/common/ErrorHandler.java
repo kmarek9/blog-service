@@ -1,6 +1,7 @@
 package pl.twojekursy.common;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -46,7 +47,7 @@ public class ErrorHandler {
         return ResponseEntity.badRequest().build();
     }
 
-    @ExceptionHandler({NoSuchElementException.class, EntityNotFoundException.class})
+    @ExceptionHandler({NoSuchElementException.class, EntityNotFoundException.class, EmptyResultDataAccessException.class})
     public ResponseEntity<Void> handleNotFoundExceptions(RuntimeException ex){
         return ResponseEntity.notFound().build();
     }

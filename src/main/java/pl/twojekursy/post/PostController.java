@@ -29,4 +29,16 @@ public class PostController {
         postService.update(id, updatePostRequest);
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/{id}/archive")
+    public ResponseEntity<Void> archive(@PathVariable("id") Long id){
+        postService.archive(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id){
+        postService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
