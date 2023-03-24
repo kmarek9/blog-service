@@ -4,11 +4,15 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Invoice {
 
     @Id
@@ -20,8 +24,13 @@ public class Invoice {
     private Integer version;
 
     // wymagane
+    @CreatedDate
     @NotNull
     private LocalDateTime createdDate;
+
+    @LastModifiedDate
+    @NotNull
+    private LocalDateTime lastModifiedDate;
 
     // wymagane
     @NotNull
@@ -51,6 +60,7 @@ public class Invoice {
         this.id = old.id;
         this.version = old.version;
         this.createdDate = old.createdDate;
+        this.lastModifiedDate = old.lastModifiedDate;
         this.paymentDate = old.paymentDate;
         this.buyer = old.buyer;
         this.seller = old.seller;
@@ -58,7 +68,6 @@ public class Invoice {
     }
 
     public Invoice(LocalDate paymentDate, String buyer, String seller) {
-        this.createdDate = LocalDateTime.now();
         this.paymentDate = paymentDate;
         this.buyer = buyer;
         this.seller = seller;

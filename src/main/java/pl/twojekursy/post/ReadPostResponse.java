@@ -10,7 +10,7 @@ public class ReadPostResponse {
 
     private final String text;
 
-    private final LocalDateTime createdDate;
+    private final LocalDateTime createdDateTime;
 
     private final PostScope scope;
 
@@ -22,11 +22,11 @@ public class ReadPostResponse {
 
 
 
-    public ReadPostResponse(Long id, Integer version, String text, LocalDateTime createdDate, PostScope scope, String author, LocalDateTime publicationDate, PostStatus status) {
+    public ReadPostResponse(Long id, Integer version, String text, LocalDateTime createdDateTime, PostScope scope, String author, LocalDateTime publicationDate, PostStatus status) {
         this.id = id;
         this.version = version;
         this.text = text;
-        this.createdDate = createdDate;
+        this.createdDateTime = createdDateTime;
         this.scope = scope;
         this.author = author;
         this.publicationDate = publicationDate;
@@ -45,8 +45,8 @@ public class ReadPostResponse {
         return text;
     }
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
+    public LocalDateTime getCreatedDateTime() {
+        return createdDateTime;
     }
 
     public PostScope getScope() {
@@ -70,7 +70,7 @@ public class ReadPostResponse {
                 post.getId(),
                 post.getVersion(),
                 post.getText(),
-                post.getCreatedDate(),
+                post.getCreatedDateTime(),
                 post.getScope(),
                 post.getAuthor(),
                 post.getPublicationDate(),

@@ -2,10 +2,14 @@ package pl.twojekursy.post;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,13 +19,18 @@ public class Post {
     @NotNull
     private Integer version;
 
+    @CreatedDate
+    @NotNull
+    private LocalDateTime createdDateTime;
+
+    @LastModifiedDate
+    @NotNull
+    private LocalDateTime lastModifiedDateTime;
+
     @NotBlank
     @NotNull
     @Size(max = 5000)
     private String text;
-
-    @NotNull
-    private LocalDateTime createdDate;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -46,8 +55,9 @@ public class Post {
     public Post(Post old){
         this.id = old.id;
         this.version = old.version;
+        this.createdDateTime=old.createdDateTime;
+        this.lastModifiedDateTime=old.lastModifiedDateTime;
         this.text = old.text;
-        this.createdDate = old.createdDate;
         this.scope = old.scope;
         this.author = old.author;
         this.publicationDate = old.publicationDate;
@@ -56,7 +66,6 @@ public class Post {
 
     public Post(String text, PostScope scope, String author, LocalDateTime publicationDate) {
         this.text = text;
-        this.createdDate = LocalDateTime.now();
         this.scope = scope;
         this.author = author;
         this.publicationDate = publicationDate;
@@ -69,10 +78,6 @@ public class Post {
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
     }
 
     public void setScope(PostScope scope) {
@@ -107,10 +112,6 @@ public class Post {
         return text;
     }
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
     public PostScope getScope() {
         return scope;
     }
@@ -127,12 +128,30 @@ public class Post {
         return status;
     }
 
+    public LocalDateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(LocalDateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
+
+    public LocalDateTime getLastModifiedDateTime() {
+        return lastModifiedDateTime;
+    }
+
+    public void setLastModifiedDateTime(LocalDateTime lastModifiedDateTime) {
+        this.lastModifiedDateTime = lastModifiedDateTime;
+    }
+
     @Override
     public String toString() {
         return "Post{" +
                 "id=" + id +
+                ", version=" + version +
+                ", createdDateTime=" + createdDateTime +
+                ", lastModifiedDateTime=" + lastModifiedDateTime +
                 ", text='" + text + '\'' +
-                ", createdDate=" + createdDate +
                 ", scope=" + scope +
                 ", author='" + author + '\'' +
                 ", publicationDate=" + publicationDate +
