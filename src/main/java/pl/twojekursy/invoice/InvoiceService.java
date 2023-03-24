@@ -43,4 +43,18 @@ public class InvoiceService {
 
         invoiceRepository.save(newInvoice);
     }
+
+    public void delete(Long id) {
+        invoiceRepository.deleteById(id);
+    }
+
+    public void archive(Long id) {
+        Invoice invoice = invoiceRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+
+        Invoice newInvoice = new Invoice(invoice);
+
+        newInvoice.setStatus(InvoiceStatus.DELETED);
+        invoiceRepository.save(newInvoice);
+    }
 }
