@@ -41,4 +41,10 @@ public class PostController {
         postService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping
+    public ResponseEntity<Void> find(){
+        postService.find();
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -1,10 +1,11 @@
 package pl.twojekursy.post;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.OptimisticLockException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class PostService {
@@ -55,5 +56,31 @@ public class PostService {
         Post newPost = new Post(post);
         newPost.setStatus(PostStatus.DELETED);
         postRepository.save(newPost);
+    }
+
+    public void find() {
+        log(postRepository.findByStatus(PostStatus.ACTIVE), "findByStatus");
+
+        System.out.println(postRepository.countByStatus(PostStatus.DELETED));
+        System.out.println(postRepository.existsByStatus(PostStatus.ACTIVE));
+
+        log(postRepository.findByStatusAndAuthor(PostStatus.ACTIVE, "Marek Koszałka"), "findByStatusAndAuthor");
+
+        log(postRepository.findByStatusInAndAuthorLike(Set.of(PostStatus.ACTIVE), "Marek Koszałka"), "findByStatusInAndAuthorLike");
+        log(postRepository.findByStatusInAndAuthorContaining(Set.of(PostStatus.ACTIVE), "Marek Koszałka"), "findByStatusInAndAuthorContaining");
+        log(postRepository.findByStatusInAndAuthorStartingWith(Set.of(PostStatus.ACTIVE), "Marek Koszałka"), "findByStatusInAndAuthorStartingWith");
+
+        log(postRepository.findByStatusInAndAuthorStartingWith(Set.of(), "Marek Koszałka"), "findByStatusInAndAuthorStartingWith");
+
+
+        log(postRepository.findByStatusInAndCreatedDateTimeBetween(Set.of(PostStatus.DELETED),
+                LocalDate.of(2023, 3, 24).atStartOfDay(),
+                LocalDate.of(2023, 3, 26).atStartOfDay()
+        ), "findByStatusInAndCreatedDateTimeBetween");
+    }
+
+    private void log(List<Post> posts, String methodName){
+        System.out.println("-------------------- "+ methodName +" ----------------------");
+        posts.forEach(System.out::println);
     }
 }
