@@ -3,7 +3,9 @@ package pl.twojekursy.invoice;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class InvoiceService {
@@ -56,5 +58,15 @@ public class InvoiceService {
 
         newInvoice.setStatus(InvoiceStatus.DELETED);
         invoiceRepository.save(newInvoice);
+    }
+
+    public void find() {
+        List<Invoice> invoices = invoiceRepository.findAllByPaymentDateBetweenAndSellerStartingWithIgnoreCaseAndStatusIn(
+                LocalDate.of(2023,3,28),
+                LocalDate.of(2023,3,29),
+                "Sel",
+                Set.of(InvoiceStatus.ACTIVE, InvoiceStatus.DRAFT)
+                );
+        invoices.forEach(System.out::println);
     }
 }

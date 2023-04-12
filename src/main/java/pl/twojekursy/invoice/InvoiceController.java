@@ -41,4 +41,10 @@ public class InvoiceController {
         invoiceService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping
+    public ResponseEntity<Void> find(){
+        invoiceService.find();
+        return ResponseEntity.noContent().build();
+    }
 }
