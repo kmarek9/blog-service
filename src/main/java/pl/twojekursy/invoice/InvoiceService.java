@@ -1,11 +1,13 @@
 package pl.twojekursy.invoice;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 @Service
 public class InvoiceService {
@@ -61,6 +63,22 @@ public class InvoiceService {
     }
 
     public void find() {
+
+        log(() -> invoiceRepository.findByPaymentDateLessThanEqualOrderByPaymentDateDesc(
+                LocalDate.of(2023,3,28)
+            ) ,
+                "findByPaymentDateLessThenEqualOrderByPaymentDateDesc"
+        );
+
+        log(() -> invoiceRepository.findByPaymentDateLessThanEqual(
+                        LocalDate.of(2023,3,28),
+                        Sort.by(Sort.Order.desc("paymentDate"),
+                                Sort.Order.asc("id")
+                                )
+                ) ,
+                "findByPaymentDateLessThenEqualOrderByPaymentDateDesc"
+        );
+
         List<Invoice> invoices = invoiceRepository.findAllByPaymentDateBetweenAndSellerStartingWithIgnoreCaseAndStatusIn(
                 LocalDate.of(2023,3,28),
                 LocalDate.of(2023,3,29),
@@ -68,5 +86,11 @@ public class InvoiceService {
                 Set.of(InvoiceStatus.ACTIVE, InvoiceStatus.DRAFT)
                 );
         invoices.forEach(System.out::println);
+    }
+
+    private void log(Supplier<List<Invoice>> listSupplier, String methodName){
+        System.out.println("---------------" + methodName + " ---------------------");
+
+        listSupplier.get().forEach(System.out::println);
     }
 }
