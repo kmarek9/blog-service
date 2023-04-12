@@ -1,6 +1,7 @@
 package pl.twojekursy.post;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -59,9 +60,26 @@ public class PostService {
     }
 
     public void find() {
-        log(postRepository.findByStatus(PostStatus.ACTIVE), "findByStatus");
+        log(postRepository.findByStatusOrderByCreatedDateTimeDesc(PostStatus.ACTIVE), "findByStatusOrderByCreatedDateTimeDesc");
 
-        System.out.println(postRepository.countByStatus(PostStatus.DELETED));
+        log(postRepository.findByStatusOrderByCreatedDateTime(PostStatus.ACTIVE), "findByStatusOrderByCreatedDateTime");
+
+        log(postRepository.findByStatus(PostStatus.ACTIVE,
+                        Sort.by("createdDateTime")
+                ), "findByStatus"
+        );
+
+        log(postRepository.findByStatus(PostStatus.ACTIVE,
+                        Sort.by("createdDateTime", "author")
+                ), "findByStatus"
+        );
+
+        log(postRepository.findByStatus(PostStatus.ACTIVE,
+                        Sort.by(Sort.Order.asc("createdDateTime"), Sort.Order.desc("author"))
+                ), "findByStatus"
+        );
+
+      /*  System.out.println(postRepository.countByStatus(PostStatus.DELETED));
         System.out.println(postRepository.existsByStatus(PostStatus.ACTIVE));
 
         log(postRepository.findByStatusAndAuthor(PostStatus.ACTIVE, "Marek Koszałka"), "findByStatusAndAuthor");
@@ -77,7 +95,7 @@ public class PostService {
                 LocalDate.of(2023, 3, 24).atStartOfDay(),
                 LocalDate.of(2023, 3, 26).atStartOfDay()
         ), "findByStatusInAndCreatedDateTimeBetween");
-    }
+*/    }
 
     private void log(List<Post> posts, String methodName){
         System.out.println("-------------------- "+ methodName +" ----------------------");

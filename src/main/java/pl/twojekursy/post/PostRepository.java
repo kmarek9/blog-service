@@ -1,5 +1,6 @@
 package pl.twojekursy.post;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.CrudRepository;
 
 import java.time.LocalDate;
@@ -8,7 +9,11 @@ import java.util.List;
 import java.util.Set;
 
 public interface PostRepository extends CrudRepository<Post, Long> {
-    List<Post> findByStatus(PostStatus postStatus);
+    List<Post> findByStatusOrderByCreatedDateTimeDesc(PostStatus postStatus);
+
+    List<Post> findByStatusOrderByCreatedDateTime(PostStatus postStatus);
+
+    List<Post> findByStatus(PostStatus postStatus, Sort sort);
 
     List<Post> findByStatusAndAuthor(PostStatus postStatus, String author);
 

@@ -2,7 +2,7 @@ insert into post (version, author, created_date_time, last_modified_date_time, p
     values (0, 'Marek Koszałka', '2023-03-23T12:48:19','2023-03-24T12:48:19', null, 'PUBLIC', 'ACTIVE', 'POST z data.sql');
 
 insert into post (version, author, created_date_time, last_modified_date_time, publication_date, scope, status, text)
-    values (0, 'Marek Koszałka2', '2023-03-23T12:48:19','2023-03-24T12:48:19', null, 'PUBLIC', 'ACTIVE', 'POST2 z data.sql');
+    values (0, 'Adam Koszałka2', '2023-03-23T12:48:19','2023-03-24T12:48:19', null, 'PUBLIC', 'ACTIVE', 'POST2 z data.sql');
 
 insert into post (version, author, created_date_time, last_modified_date_time, publication_date, scope, status, text)
     values (0, 'Marek Koszałka3', '2023-03-24T12:48:19','2023-03-24T12:48:19', null, 'PUBLIC', 'DELETED', 'POST3 z data.sql');
