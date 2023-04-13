@@ -70,6 +70,12 @@ public class InvoiceService {
                 "findByPaymentDateLessThenEqualOrderByPaymentDateDesc"
         );
 
+        log(() -> invoiceRepository.findAndOrderByPaymentDateDesc(
+                        LocalDate.of(2023,3,28)
+                ) ,
+                "findAndOrderByPaymentDateDesc"
+        );
+
         log(() -> invoiceRepository.findByPaymentDateLessThanEqual(
                         LocalDate.of(2023,3,28),
                         Sort.by(Sort.Order.desc("paymentDate"),
@@ -79,13 +85,34 @@ public class InvoiceService {
                 "findByPaymentDateLessThenEqualOrderByPaymentDateDesc"
         );
 
-        List<Invoice> invoices = invoiceRepository.findAllByPaymentDateBetweenAndSellerStartingWithIgnoreCaseAndStatusIn(
+        log(() -> invoiceRepository.findByAndSort(
+                        LocalDate.of(2023,3,28),
+                        Sort.by(Sort.Order.desc("paymentDate"),
+                                Sort.Order.asc("id")
+                        )
+                ) ,
+                "findByAndSort"
+        );
+
+
+        log(()-> invoiceRepository.findAllByPaymentDateBetweenAndSellerStartingWithIgnoreCaseAndStatusIn(
                 LocalDate.of(2023,3,28),
                 LocalDate.of(2023,3,29),
                 "Sel",
                 Set.of(InvoiceStatus.ACTIVE, InvoiceStatus.DRAFT)
-                );
-        invoices.forEach(System.out::println);
+                ),
+                "findAllByPaymentDateBetweenAndSellerStartingWithIgnoreCaseAndStatusIn"
+        );
+
+
+        log(()-> invoiceRepository.findBy(
+                        LocalDate.of(2023,3,28),
+                        LocalDate.of(2023,3,29),
+                        "Sel%",
+                        Set.of(InvoiceStatus.ACTIVE, InvoiceStatus.DRAFT)
+                ),
+                "findBy"
+        );
     }
 
     private void log(Supplier<List<Invoice>> listSupplier, String methodName){
