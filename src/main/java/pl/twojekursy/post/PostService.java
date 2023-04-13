@@ -2,11 +2,15 @@ package pl.twojekursy.post;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
+import pl.twojekursy.invoice.Invoice;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 @Service
 public class PostService {
@@ -60,6 +64,7 @@ public class PostService {
     }
 
     public void find() {
+
         log(postRepository.findByStatusOrderByCreatedDateTimeDesc(PostStatus.ACTIVE), "findByStatusOrderByCreatedDateTimeDesc");
 
         log(postRepository.findByStatusOrderByCreatedDateTime(PostStatus.ACTIVE), "findByStatusOrderByCreatedDateTime");
@@ -79,7 +84,7 @@ public class PostService {
                 ), "findByStatus"
         );
 
-      /*  System.out.println(postRepository.countByStatus(PostStatus.DELETED));
+        System.out.println(postRepository.countByStatus(PostStatus.DELETED));
         System.out.println(postRepository.existsByStatus(PostStatus.ACTIVE));
 
         log(postRepository.findByStatusAndAuthor(PostStatus.ACTIVE, "Marek Koszałka"), "findByStatusAndAuthor");
@@ -95,10 +100,54 @@ public class PostService {
                 LocalDate.of(2023, 3, 24).atStartOfDay(),
                 LocalDate.of(2023, 3, 26).atStartOfDay()
         ), "findByStatusInAndCreatedDateTimeBetween");
-*/    }
+
+        log(postRepository::find, "find");
+
+
+        log(()-> postRepository.findByStatusOrderByCreatedDateTimeDesc(PostStatus.DELETED), "findByStatusOrderByCreatedDateTimeDesc");
+        log(()-> postRepository.findOrderByCreateDateDescending(PostStatus.DELETED), "findOrderByCreateDateDescending");
+
+        log(()->postRepository.findByStatus(PostStatus.DELETED,
+                        Sort.by(Sort.Order.desc("createdDateTime"), Sort.Order.desc("author"))
+                ), "findByStatus"
+        );
+
+        log(()->postRepository.findAndSort(PostStatus.DELETED,
+                        Sort.by(Sort.Order.desc("createdDateTime"), Sort.Order.desc("author"))
+                ), "findByStatus"
+        );
+
+        log(()->postRepository.findByStatusInAndAuthorLike(Set.of(PostStatus.ACTIVE), "Marek Koszałka"), "findByStatusInAndAuthorLike");
+        log(()->postRepository.find(Set.of(PostStatus.ACTIVE, PostStatus.DELETED), "Koszałka"), "find");
+
+        System.out.println("=================================================================================");
+        System.out.println("find");
+        System.out.println(postRepository.find(1L));
+
+        System.out.println("findOptional");
+        System.out.println(postRepository.findOptional(4554L));
+
+        System.out.println("count");
+        System.out.println(postRepository.count());
+
+        System.out.println("findIds");
+        System.out.println(postRepository.findIds());
+
+        System.out.println("findAuthors");
+        System.out.println(postRepository.findAuthors());
+
+        System.out.println("find po statusie");
+        System.out.println(postRepository.find(PostStatus.ACTIVE));
+    }
 
     private void log(List<Post> posts, String methodName){
         System.out.println("-------------------- "+ methodName +" ----------------------");
         posts.forEach(System.out::println);
+    }
+
+    private void log(Supplier<List<Post>> listSupplier, String methodName){
+        System.out.println("---------------" + methodName + " ---------------------");
+
+        listSupplier.get().forEach(System.out::println);
     }
 }
