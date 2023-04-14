@@ -1,5 +1,7 @@
 package pl.twojekursy.post;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -43,8 +45,15 @@ public interface PostRepository extends CrudRepository<Post, Long> {
 
     List<Post> findByStatus(PostStatus postStatus, Sort sort);
 
+    List<Post> findByStatus(PostStatus postStatus, Pageable pageable);
+
+    Page<Post> findAllByStatus(PostStatus postStatus, Pageable pageable);
+
     @Query("select p from Post p where p.status=:postStatus")
     List<Post> findAndSort(PostStatus postStatus, Sort sort);
+
+    @Query("select p from Post p where p.status=:postStatus")
+    List<Post> findAndSort(PostStatus postStatus, Pageable pageable);
 
     List<Post> findByStatusAndAuthor(PostStatus postStatus, String author);
 

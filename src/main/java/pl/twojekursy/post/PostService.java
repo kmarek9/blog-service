@@ -1,6 +1,9 @@
 package pl.twojekursy.post;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
@@ -136,8 +139,18 @@ public class PostService {
         System.out.println("findAuthors");
         System.out.println(postRepository.findAuthors());
 
-        System.out.println("find po statusie");
-        System.out.println(postRepository.find(PostStatus.ACTIVE));
+        /*System.out.println("find po statusie");
+        System.out.println(postRepository.find(PostStatus.ACTIVE));*/
+
+        log(()->postRepository.findByStatus(PostStatus.ACTIVE, PageRequest.of(0, 2, Sort.by(Sort.Order.desc("id")))) ,"findByStatus");
+        log(()->postRepository.findByStatus(PostStatus.ACTIVE, PageRequest.of(1, 2, Sort.by(Sort.Order.desc("id")))) ,"findByStatus");
+        log(()->postRepository.findByStatus(PostStatus.ACTIVE, PageRequest.of(2, 2, Sort.by(Sort.Order.desc("id")))) ,"findByStatus");
+        log(()->postRepository.findByStatus(PostStatus.ACTIVE, PageRequest.of(3, 2, Sort.by(Sort.Order.desc("id")))) ,"findByStatus");
+
+        logPage(()->postRepository.findAllByStatus(PostStatus.ACTIVE, PageRequest.of(0, 2, Sort.by(Sort.Order.desc("id")))) ,"findAllByStatus 0");
+        logPage(()->postRepository.findAllByStatus(PostStatus.ACTIVE, PageRequest.of(1, 2, Sort.by(Sort.Order.desc("id")))) ,"findAllByStatus 1");
+        logPage(()->postRepository.findAllByStatus(PostStatus.ACTIVE, PageRequest.of(2, 2, Sort.by(Sort.Order.desc("id")))) ,"findAllByStatus 2");
+        logPage(()->postRepository.findAllByStatus(PostStatus.ACTIVE, PageRequest.of(3, 2, Sort.by(Sort.Order.desc("id")))) ,"findAllByStatus 3");
     }
 
     private void log(List<Post> posts, String methodName){
@@ -149,5 +162,18 @@ public class PostService {
         System.out.println("---------------" + methodName + " ---------------------");
 
         listSupplier.get().forEach(System.out::println);
+    }
+
+    private void logPage(Supplier<Page<Post>> pageSupplier, String methodName){
+        System.out.println("---------------" + methodName + " ---------------------");
+
+        Page<Post> page = pageSupplier.get();
+
+        System.out.println("getContent(): " + page.getContent());
+        System.out.println("getTotalPages(): " + page.getTotalPages());
+        System.out.println("getTotalElements(): "+page.getTotalElements());
+        System.out.println("getNumber(): "+page.getNumber());
+        System.out.println("getNumberOfElements(): "+page.getNumberOfElements());
+        System.out.println("getSize(): "+page.getSize());
     }
 }
