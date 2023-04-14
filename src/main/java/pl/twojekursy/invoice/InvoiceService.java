@@ -1,8 +1,15 @@
 package pl.twojekursy.invoice;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.cglib.core.Local;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import pl.twojekursy.post.Post;
+import pl.twojekursy.post.PostService;
+import pl.twojekursy.util.LogUtil;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -113,6 +120,34 @@ public class InvoiceService {
                 ),
                 "findBy"
         );
+
+        //zad dom
+        //skopiowac poniższą metodą i dodać stronicowanie i zwracać Page
+        //w serwisie wywołac 4x
+        // - dla daty 2023-03-28 ,
+        // - okno o wielkosci 3
+        // - posortować po seller malejaco
+        // - numer strony 0, 1,2, 3 i obejrzec wyniki i zapytania
+        LogUtil.logPage(() -> invoiceRepository.findByAndSort(
+                LocalDate.of(2023,3,28),
+                PageRequest.of(0,3,Sort.by(Sort.Order.desc("seller")))
+        ), "findByAndSort");
+
+        LogUtil.logPage(() -> invoiceRepository.findByAndSort(
+                LocalDate.of(2023,3,28),
+                PageRequest.of(1,3,Sort.by(Sort.Order.desc("seller")))
+        ), "findByAndSort");
+
+        LogUtil.logPage(() -> invoiceRepository.findByAndSort(
+                LocalDate.of(2023,3,28),
+                PageRequest.of(2,3,Sort.by(Sort.Order.desc("seller")))
+        ), "findByAndSort");
+
+        LogUtil.logPage(() -> invoiceRepository.findByAndSort(
+                LocalDate.of(2023,3,28),
+                PageRequest.of(3,3,Sort.by(Sort.Order.desc("seller")))
+        ), "findByAndSort");
+
     }
 
     private void log(Supplier<List<Invoice>> listSupplier, String methodName){
