@@ -1,6 +1,7 @@
 package pl.twojekursy.invoice;
 
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,9 +43,22 @@ public class InvoiceController {
         return ResponseEntity.noContent().build();
     }
 
+    //stworzyc usługę typu GET, która zwraca listę invoicow, które sa ACTIVE lub DRAFT ,
+    // posortowane po dacie platnosci rosnaco
+    //dostępna pod adresem /api/invoices
+    //parametry:
+    //s - filtruje po polu seller, usługa zwraca invoicy, ktore zawieraja w polu seller wartosc podaną w polu s
+    //b - filtruje po polu buyer, usługa zwraca invoicy, ktore zawieraja w polu buyer wartosc podaną w polu b
+    //page - numer strony (numeracja od 0), wymagany
+    //size - rozmiar strony, wymagany
+    //
+    //response:
+    //id,  seller, buyer, paymentDate
     @GetMapping
-    public ResponseEntity<Void> find(){
-        invoiceService.find();
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Page<FindInvoiceResponse>> find(@RequestParam(value = "s", defaultValue = "") String sellerContaining,
+                                                          @RequestParam(value = "b", defaultValue = "") String buyerContaining,
+                                                          @RequestParam int page,
+                                                          @RequestParam int size){
+        return ResponseEntity.ok(invoiceService.find(sellerContaining, buyerContaining,page, size));
     }
 }

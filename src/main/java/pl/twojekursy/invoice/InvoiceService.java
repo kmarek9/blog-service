@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import pl.twojekursy.post.Post;
 import pl.twojekursy.post.PostService;
 import pl.twojekursy.util.LogUtil;
@@ -69,7 +70,18 @@ public class InvoiceService {
         invoiceRepository.save(newInvoice);
     }
 
-    public void find() {
+    public Page<FindInvoiceResponse> find(String sellerContaining,
+                                          String buyerContaining,
+                                          int page,
+                                          int size){
+        return invoiceRepository.findByBuyerContainingAndSellerContainingAndStatusInOrderByPaymentDate(
+                buyerContaining, sellerContaining,
+                Set.of(InvoiceStatus.ACTIVE, InvoiceStatus.DRAFT),
+                PageRequest.of(page, size, Sort.by(Sort.Order.asc("id")))
+        )
+                .map(FindInvoiceResponse::from);
+    }
+    public void find2() {
 
         log(() -> invoiceRepository.findByPaymentDateLessThanEqualOrderByPaymentDateDesc(
                 LocalDate.of(2023,3,28)

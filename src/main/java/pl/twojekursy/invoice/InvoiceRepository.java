@@ -14,6 +14,13 @@ public interface InvoiceRepository extends CrudRepository<Invoice, Long> {
 
     List<Invoice> findByPaymentDateLessThanEqualOrderByPaymentDateDesc(LocalDate maxPaymentDate);
 
+    Page<Invoice> findByBuyerContainingAndSellerContainingAndStatusInOrderByPaymentDate(
+                                                    String buyer,
+                                                    String Seller,
+                                                    Set<InvoiceStatus> invoiceStatuses,
+                                                    Pageable pageable
+    );
+
     @Query("select i from Invoice i where i.paymentDate <= :maxPaymentDate order by i.paymentDate desc")
     List<Invoice> findAndOrderByPaymentDateDesc(LocalDate maxPaymentDate);
 
