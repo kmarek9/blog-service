@@ -3,16 +3,13 @@ package pl.twojekursy.post;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
-import pl.twojekursy.invoice.Invoice;
 import pl.twojekursy.util.LogUtil;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -67,7 +64,17 @@ public class PostService {
         postRepository.save(newPost);
     }
 
-    public void find() {
+    public Page<FindPostResponse> find(String textContaining,
+                     int page,
+                     int size) {
+
+        return postRepository.findActiveAndPublished(textContaining,
+                        LocalDateTime.now(),
+                        PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdDateTime"))))
+                .map(FindPostResponse::from);
+    }
+
+    public void find2() {
 
         log(postRepository.findByStatusOrderByCreatedDateTimeDesc(PostStatus.ACTIVE), "findByStatusOrderByCreatedDateTimeDesc");
 

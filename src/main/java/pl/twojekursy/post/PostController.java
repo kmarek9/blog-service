@@ -1,6 +1,7 @@
 package pl.twojekursy.post;
 
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,9 +43,20 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
+    //stworzyc usługę typu GET, która zwraca listę postów, które sa ACTIVE i opublikowane, posortowane od najnowszych
+    //dostępna pod adresem /api/posts
+    //parametry:
+    //q - filtruje po polu text, usługa zwraca posty, ktore zawieraja wartosc w polu text, wartosc podaną w polu q
+    //page - numer strony (numeracja od 0), wymagany
+    //size - rozmiar strony, wymagany
+    //
+    //response:
+    //id,  text skrócony do 50 znaków, datę utworzenie i autor
     @GetMapping
-    public ResponseEntity<Void> find(){
-        postService.find();
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Page<FindPostResponse>> find(@RequestParam(value = "q", defaultValue = "") String textContaining,
+                                           @RequestParam int page,
+                                           @RequestParam int size){
+        Page<FindPostResponse> body = postService.find(textContaining, page, size);
+        return ResponseEntity.ok(body);
     }
 }
