@@ -2,6 +2,7 @@ package pl.twojekursy.invoice;
 
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,5 +61,23 @@ public class InvoiceController {
                                                           @RequestParam int page,
                                                           @RequestParam int size){
         return ResponseEntity.ok(invoiceService.find(sellerContaining, buyerContaining,page, size));
+    }
+
+    //stworzyc usługę typu POST, która zwraca listę invoicow
+    //dostępna pod adresem /api/invoices/find
+    //parametry:
+    //pageable
+    //
+    //response:
+    //Page<FindInvoiceResponse>
+    //przerób InvoiceRepository tak aby miał metody przyjmujące Specification i Pageable
+    //Stwórz w InvoiceService metodę find(Pageable pageable)
+    //zbuduj w niej specyfikację która wytworzy zapytanie  (bez lowerów)
+    //"select i from Invoice i where i.paymentDate between :paymentStartDate and :paymentEndDate " +
+    //        "and lower(i.seller) like lower(:seller) " +
+    //        "and i.status in :statuses "
+    @PostMapping("/find")
+    public ResponseEntity<Page<FindInvoiceResponse>> find(Pageable pageable) {
+        return ResponseEntity.ok(invoiceService.find(pageable));
     }
 }

@@ -1,15 +1,15 @@
 package pl.twojekursy.invoice;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.cglib.core.Local;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
-import pl.twojekursy.post.Post;
-import pl.twojekursy.post.PostService;
 import pl.twojekursy.util.LogUtil;
 
 import java.time.LocalDate;
@@ -68,6 +68,16 @@ public class InvoiceService {
 
         newInvoice.setStatus(InvoiceStatus.DELETED);
         invoiceRepository.save(newInvoice);
+    }
+
+    //"select i from Invoice i where i.paymentDate between :paymentStartDate and :paymentEndDate " +
+    //        "and lower(i.seller) like lower(:seller) " +
+    //        "and i.status in :statuses "
+    public Page<FindInvoiceResponse> find(Pageable pageable) {
+        Specification<Invoice> invoiceSpecification = prepareSpecsUsingPredicates();
+
+        return invoiceRepository.findAll(invoiceSpecification, pageable)
+                .map(FindInvoiceResponse::from);
     }
 
     public Page<FindInvoiceResponse> find(String sellerContaining,
@@ -166,5 +176,40 @@ public class InvoiceService {
         System.out.println("---------------" + methodName + " ---------------------");
 
         listSupplier.get().forEach(System.out::println);
+    }
+
+    private static Specification<Invoice> prepareSpecs() {
+        Specification<Invoice> paymentDateSpec = (root, query, cr) -> cr.between(root.get("paymentDate"),
+                LocalDate.now().minusYears(1),
+                LocalDate.now());
+
+        Specification<Invoice> sellerSpec = (root, query, cr) -> cr.like(root.get("seller"),
+                "%"+ "Sel" +"%");
+
+        Specification<Invoice> statusInSpec = (root, query, cr) ->
+                root.get("status").in(InvoiceStatus.ACTIVE, InvoiceStatus.DRAFT);
+
+        return Specification.where(paymentDateSpec)
+                        .and(sellerSpec)
+                        .and(statusInSpec);
+    }
+
+    private static Specification<Invoice> prepareSpecsUsingPredicates() {
+        return (root, query, cr) -> {
+            Predicate paymentDatePred = cr.between(root.get("paymentDate"),
+                    LocalDate.now().minusYears(1),
+                    LocalDate.now());
+
+            Predicate sellerPred = likeIgnoreCase(cr, root.get("seller"), "Sel");
+
+            Predicate statusPred = root.get("status").in(InvoiceStatus.ACTIVE, InvoiceStatus.DRAFT);
+
+            return cr.and(paymentDatePred, sellerPred, statusPred);
+        };
+    }
+
+    private static Predicate likeIgnoreCase(CriteriaBuilder cr, Path<String> fieldPath, String text) {
+        return cr.like(cr.lower(fieldPath),
+                "%" + text.toLowerCase() + "%");
     }
 }
