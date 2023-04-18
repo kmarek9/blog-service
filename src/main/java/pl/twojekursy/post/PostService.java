@@ -69,7 +69,7 @@ public class PostService {
     }
 
     public Page<FindPostResponse> find(FindPostRequest findPostRequest, Pageable pageable) {
-        Specification<Post> specification = preparePostSpecificationUsingPredicates(findPostRequest);
+        Specification<Post> specification = preparePostSpecification(findPostRequest);
         return postRepository.findAll(specification, pageable)
                 .map(FindPostResponse::from);
     }
@@ -104,29 +104,38 @@ public class PostService {
         };
     }
 
-    private static Specification<Post> preparePostSpecification() {
-        Specification<Post> statusInSpec = (root, query, criteriaBuilder) ->
-                root.get("status").in(Set.of(PostStatus.DELETED, PostStatus.ACTIVE)) ;
+    private static Specification<Post> preparePostSpecification(FindPostRequest findPostRequest) {
+        Specification<Post> specification = Specification.where(null);
 
-        Specification<Post> textLikeSpec = (root, query, criteriaBuilder) ->
-                criteriaBuilder.like(root.get("text"), "%"+ "POST" +"%") ;
+        if(findPostRequest.postStatuses()!=null) {
+            Specification<Post> statusInSpec = (root, query, criteriaBuilder) ->
+                    root.get("status").in(findPostRequest.postStatuses());
+            specification = specification.and(statusInSpec);
+        }
 
-        Specification<Post> publicationDateSpec = (root, query, criteriaBuilder) ->
-        {
-            Predicate publicationDateIsNullPred = criteriaBuilder.isNull(root.get("publicationDate"));
-            Predicate publicationDateLEPred = criteriaBuilder.lessThanOrEqualTo(root.get("publicationDate"), LocalDateTime.now());
-            return criteriaBuilder.or(publicationDateLEPred, publicationDateIsNullPred);
-        };
+        if(findPostRequest.text()!=null) {
+            Specification<Post> textLikeSpec = (root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get("text")), "%" + findPostRequest.text().toLowerCase() + "%");
+            specification = specification.and(textLikeSpec);
+        }
 
-        Specification<Post> createDateTimeBetween = (root, query, criteriaBuilder) ->
-                criteriaBuilder.between(root.get("createdDateTime"),
-                        LocalDateTime.now().minusDays(1),
-                        LocalDateTime.now().plusDays(1)) ;
+        if(findPostRequest.publicationDate()!=null) {
+            Specification<Post> publicationDateSpec = (root, query, criteriaBuilder) ->
+            {
+                Predicate publicationDateIsNullPred = criteriaBuilder.isNull(root.get("publicationDate"));
+                Predicate publicationDateLEPred = criteriaBuilder.lessThanOrEqualTo(root.get("publicationDate"), findPostRequest.publicationDate());
+                return criteriaBuilder.or(publicationDateLEPred, publicationDateIsNullPred);
+            };
+            specification = specification.and(publicationDateSpec);
+        }
 
-        Specification<Post> specification = statusInSpec
-                .and(textLikeSpec)
-                .and(publicationDateSpec)
-                .and(createDateTimeBetween);
+        if(findPostRequest.createdDateTimeMin()!=null && findPostRequest.createdDateTimeMax()!=null) {
+            specification = specification.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.between(root.get("createdDateTime"),
+                            findPostRequest.createdDateTimeMin(),
+                            findPostRequest.createdDateTimeMax()));
+        }
+
         return specification;
     }
 
