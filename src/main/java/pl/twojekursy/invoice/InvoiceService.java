@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import pl.twojekursy.util.LogUtil;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -73,8 +74,8 @@ public class InvoiceService {
     //"select i from Invoice i where i.paymentDate between :paymentStartDate and :paymentEndDate " +
     //        "and lower(i.seller) like lower(:seller) " +
     //        "and i.status in :statuses "
-    public Page<FindInvoiceResponse> find(Pageable pageable) {
-        Specification<Invoice> invoiceSpecification = prepareSpecsUsingPredicates();
+    public Page<FindInvoiceResponse> find(FindInvoiceRequest invoiceRequest, Pageable pageable) {
+        Specification<Invoice> invoiceSpecification = prepareSpecs(invoiceRequest);
 
         return invoiceRepository.findAll(invoiceSpecification, pageable)
                 .map(FindInvoiceResponse::from);
@@ -178,33 +179,51 @@ public class InvoiceService {
         listSupplier.get().forEach(System.out::println);
     }
 
-    private static Specification<Invoice> prepareSpecs() {
-        Specification<Invoice> paymentDateSpec = (root, query, cr) -> cr.between(root.get("paymentDate"),
-                LocalDate.now().minusYears(1),
-                LocalDate.now());
+    private static Specification<Invoice> prepareSpecs(FindInvoiceRequest invoiceRequest) {
+        Specification<Invoice> specification = Specification.where(null);
 
-        Specification<Invoice> sellerSpec = (root, query, cr) -> cr.like(root.get("seller"),
-                "%"+ "Sel" +"%");
+        if(invoiceRequest.paymentDateMin()!=null && invoiceRequest.paymentDateMax()!=null) {
+            specification = specification.and((root, query, cr) -> cr.between(root.get("paymentDate"),
+                    invoiceRequest.paymentDateMin(),
+                    invoiceRequest.paymentDateMax())
+            );
+        }
 
-        Specification<Invoice> statusInSpec = (root, query, cr) ->
-                root.get("status").in(InvoiceStatus.ACTIVE, InvoiceStatus.DRAFT);
+        if(invoiceRequest.seller()!=null) {
+            specification = specification.and(
+                    (root, query, cr) -> likeIgnoreCase(cr, root.get("seller"), invoiceRequest.seller())
+            );
+        }
 
-        return Specification.where(paymentDateSpec)
-                        .and(sellerSpec)
-                        .and(statusInSpec);
+        if(invoiceRequest.invoiceStatuses()!=null) {
+            specification = specification.and((root, query, cr) ->
+                    root.get("status").in(invoiceRequest.invoiceStatuses())
+            );
+        }
+        return specification;
     }
 
-    private static Specification<Invoice> prepareSpecsUsingPredicates() {
+    private static Specification<Invoice> prepareSpecsUsingPredicates(FindInvoiceRequest invoiceRequest) {
         return (root, query, cr) -> {
-            Predicate paymentDatePred = cr.between(root.get("paymentDate"),
-                    LocalDate.now().minusYears(1),
-                    LocalDate.now());
+            List<Predicate> predicates = new ArrayList<>();
 
-            Predicate sellerPred = likeIgnoreCase(cr, root.get("seller"), "Sel");
+            if(invoiceRequest.paymentDateMin()!=null && invoiceRequest.paymentDateMax()!=null) {
 
-            Predicate statusPred = root.get("status").in(InvoiceStatus.ACTIVE, InvoiceStatus.DRAFT);
+                predicates.add(cr.between(root.get("paymentDate"),
+                        invoiceRequest.paymentDateMin(),
+                        invoiceRequest.paymentDateMax())
+                );
+            }
 
-            return cr.and(paymentDatePred, sellerPred, statusPred);
+            if(invoiceRequest.seller()!=null) {
+                predicates.add(likeIgnoreCase(cr, root.get("seller"), invoiceRequest.seller()));
+            }
+
+            if(invoiceRequest.invoiceStatuses()!=null) {
+                predicates.add(root.get("status").in(invoiceRequest.invoiceStatuses()));
+            }
+
+            return cr.and(predicates.toArray(Predicate[]::new));
         };
     }
 

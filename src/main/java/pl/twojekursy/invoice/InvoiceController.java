@@ -77,7 +77,7 @@ public class InvoiceController {
     //        "and lower(i.seller) like lower(:seller) " +
     //        "and i.status in :statuses "
     @PostMapping("/find")
-    public ResponseEntity<Page<FindInvoiceResponse>> find(Pageable pageable) {
-        return ResponseEntity.ok(invoiceService.find(pageable));
+    public ResponseEntity<Page<FindInvoiceResponse>> find(@RequestBody FindInvoiceRequest invoiceRequest, Pageable pageable) {
+        return ResponseEntity.ok(invoiceService.find(invoiceRequest, pageable));
     }
 }
