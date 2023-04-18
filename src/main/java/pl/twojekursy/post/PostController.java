@@ -2,6 +2,7 @@ package pl.twojekursy.post;
 
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,6 +58,12 @@ public class PostController {
                                            @RequestParam int page,
                                            @RequestParam int size){
         Page<FindPostResponse> body = postService.find(textContaining, page, size);
+        return ResponseEntity.ok(body);
+    }
+
+    @PostMapping("/find")
+    public ResponseEntity<Page<FindPostResponse>> find(Pageable pageable){
+        Page<FindPostResponse> body = postService.find(pageable);
         return ResponseEntity.ok(body);
     }
 }

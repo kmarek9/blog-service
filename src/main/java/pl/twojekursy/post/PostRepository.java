@@ -3,6 +3,7 @@ package pl.twojekursy.post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public interface PostRepository extends CrudRepository<Post, Long> {
+public interface PostRepository extends CrudRepository<Post, Long>, JpaSpecificationExecutor<Post> {
 
     @Query("select p from Post p")
     List<Post> find();
