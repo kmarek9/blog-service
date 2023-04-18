@@ -1,10 +1,7 @@
 package pl.twojekursy.post;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +12,7 @@ import pl.twojekursy.util.LogUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -70,27 +68,39 @@ public class PostService {
         postRepository.save(newPost);
     }
 
-    public Page<FindPostResponse> find(Pageable pageable) {
-        Specification<Post> specification = preparePostSpecificationUsingPredicates();
+    public Page<FindPostResponse> find(FindPostRequest findPostRequest, Pageable pageable) {
+        Specification<Post> specification = preparePostSpecificationUsingPredicates(findPostRequest);
         return postRepository.findAll(specification, pageable)
                 .map(FindPostResponse::from);
     }
 
-    private static Specification<Post> preparePostSpecificationUsingPredicates() {
+    private static Specification<Post> preparePostSpecificationUsingPredicates(FindPostRequest findPostRequest) {
         return (root, query, criteriaBuilder) ->
         {
-            Predicate statusPred = root.get("status").in(Set.of(PostStatus.DELETED, PostStatus.ACTIVE));
-            Predicate textPredicate = criteriaBuilder.like(root.get("text"), "%" + "POST" + "%");
+            List<Predicate> predicates = new ArrayList<>();
 
-            Predicate publicationDateIsNullPred = criteriaBuilder.isNull(root.get("publicationDate"));
-            Predicate publicationDateLEPred = criteriaBuilder.lessThanOrEqualTo(root.get("publicationDate"), LocalDateTime.now());
-            Predicate publicationDatePred = criteriaBuilder.or(publicationDateLEPred, publicationDateIsNullPred);
+            if(findPostRequest.postStatuses()!=null ) {
+                predicates.add(root.get("status").in(findPostRequest.postStatuses()));
+            }
 
-            Predicate createdDateTimePred = criteriaBuilder.between(root.get("createdDateTime"),
-                    LocalDateTime.now().minusDays(1),
-                    LocalDateTime.now().plusDays(1));
+            if(findPostRequest.text()!=null) {
+                predicates.add(criteriaBuilder.like(root.get("text"), "%" + findPostRequest.text() + "%"));
+            }
 
-            return criteriaBuilder.and(statusPred,textPredicate, publicationDatePred , createdDateTimePred);
+            if(findPostRequest.publicationDate()!=null) {
+                Predicate publicationDateIsNullPred = criteriaBuilder.isNull(root.get("publicationDate"));
+                Predicate publicationDateLEPred = criteriaBuilder.lessThanOrEqualTo(root.get("publicationDate"), findPostRequest.publicationDate());
+                predicates.add(criteriaBuilder.or(publicationDateLEPred, publicationDateIsNullPred));
+            }
+
+            if(findPostRequest.createdDateTimeMax()!=null && findPostRequest.createdDateTimeMin()!=null) {
+                predicates.add(criteriaBuilder.between(root.get("createdDateTime"),
+                        findPostRequest.createdDateTimeMin(),
+                        findPostRequest.createdDateTimeMax())
+                );
+            }
+
+            return criteriaBuilder.and( predicates.toArray(new Predicate[0]));
         };
     }
 
