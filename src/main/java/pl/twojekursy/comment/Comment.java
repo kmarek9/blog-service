@@ -47,6 +47,12 @@ public class Comment {
 
     }
 
+    public Comment(String text, String author, Post post) {
+        this.text = text;
+        this.author = author;
+        this.post = post;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -91,7 +97,13 @@ public class Comment {
         this.lastModifiedDateTime = lastModifiedDateTime;
     }
 
+    public Post getPost() {
+        return post;
+    }
 
+    public void setPost(Post post) {
+        this.post = post;
+    }
 
     @Override
     public String toString() {
