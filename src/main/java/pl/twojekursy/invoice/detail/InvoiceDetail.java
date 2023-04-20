@@ -8,6 +8,7 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import pl.twojekursy.invoice.Invoice;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -42,7 +43,8 @@ public class InvoiceDetail {
     @NotNull
     private BigDecimal price;
 
-    private Long invoiceId;
+    @ManyToOne(optional = false)
+    private Invoice invoice;
 
     public InvoiceDetail() {
     }
@@ -95,12 +97,12 @@ public class InvoiceDetail {
         this.price = price;
     }
 
-    public Long getInvoiceId() {
-        return invoiceId;
+    public Invoice getInvoice() {
+        return invoice;
     }
 
-    public void setInvoiceId(Long invoiceId) {
-        this.invoiceId = invoiceId;
+    public void setInvoice(Invoice invoice) {
+        this.invoice = invoice;
     }
 
     @Override
@@ -112,7 +114,6 @@ public class InvoiceDetail {
                 ", lastModifiedDate=" + lastModifiedDate +
                 ", productName='" + productName + '\'' +
                 ", price=" + price +
-                ", invoiceId=" + invoiceId +
                 '}';
     }
 }

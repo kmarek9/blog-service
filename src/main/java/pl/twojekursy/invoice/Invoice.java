@@ -9,9 +9,11 @@ import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import pl.twojekursy.invoice.detail.InvoiceDetail;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -56,6 +58,9 @@ public class Invoice {
     @NotNull
     @Enumerated(EnumType.STRING)
     private InvoiceStatus status;
+
+    @OneToMany(mappedBy = "invoice")
+    private Set<InvoiceDetail> invoiceDetails;
 
     public Invoice() {
     }
@@ -132,6 +137,22 @@ public class Invoice {
 
     public void setVersion(Integer version) {
         this.version = version;
+    }
+
+    public LocalDateTime getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public Set<InvoiceDetail> getInvoiceDetails() {
+        return invoiceDetails;
+    }
+
+    public void setInvoiceDetails(Set<InvoiceDetail> invoiceDetails) {
+        this.invoiceDetails = invoiceDetails;
     }
 
     @Override

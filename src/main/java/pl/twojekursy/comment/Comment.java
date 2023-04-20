@@ -40,7 +40,7 @@ public class Comment {
     @NotAudited
     private String author;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Post post;
 
     public Comment(){
