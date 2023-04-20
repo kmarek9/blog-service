@@ -9,6 +9,7 @@ import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import pl.twojekursy.post.Post;
 
 import java.time.LocalDateTime;
 
@@ -39,25 +40,11 @@ public class Comment {
     @NotAudited
     private String author;
 
-    @NotNull
-    private Long postId;
+    @ManyToOne
+    private Post post;
 
     public Comment(){
 
-    }
-
-    public Comment(Comment old){
-        this.id = old.id;
-        this.createdDateTime=old.createdDateTime;
-        this.lastModifiedDateTime=old.lastModifiedDateTime;
-        this.text = old.text;
-        this.author = old.author;
-        this.postId = old.postId;
-    }
-
-    public Comment(String text, String author) {
-        this.text = text;
-        this.author = author;
     }
 
     public void setId(Long id) {
@@ -104,13 +91,7 @@ public class Comment {
         this.lastModifiedDateTime = lastModifiedDateTime;
     }
 
-    public Long getPostId() {
-        return postId;
-    }
 
-    public void setPostId(Long postId) {
-        this.postId = postId;
-    }
 
     @Override
     public String toString() {
@@ -119,8 +100,7 @@ public class Comment {
                 ", createdDateTime=" + createdDateTime +
                 ", lastModifiedDateTime=" + lastModifiedDateTime +
                 ", text='" + text + '\'' +
-                ", author='" + author + '\'' +
-                ", postId=" + postId +
+                ", author='" + author +
                 '}';
     }
 }

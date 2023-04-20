@@ -10,8 +10,10 @@ import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import pl.twojekursy.comment.Comment;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -54,6 +56,9 @@ public class Post {
     @NotNull
     @Enumerated(EnumType.STRING)
     private PostStatus status;
+
+    @OneToMany(mappedBy = "post")
+    private Set<Comment> comments;
 
     public Post(){
 
@@ -149,6 +154,14 @@ public class Post {
 
     public void setLastModifiedDateTime(LocalDateTime lastModifiedDateTime) {
         this.lastModifiedDateTime = lastModifiedDateTime;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
     }
 
     @Override
