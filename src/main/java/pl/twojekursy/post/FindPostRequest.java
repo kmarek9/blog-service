@@ -1,7 +1,5 @@
 package pl.twojekursy.post;
 
-import jakarta.validation.constraints.PastOrPresent;
-
 import java.time.LocalDateTime;
 import java.util.Set;
 

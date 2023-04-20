@@ -1,9 +1,7 @@
 package pl.twojekursy.util;
 
 import org.springframework.data.domain.Page;
-import pl.twojekursy.post.Post;
 
-import java.util.List;
 import java.util.function.Supplier;
 
 public class LogUtil {

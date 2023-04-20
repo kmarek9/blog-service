@@ -1,7 +1,5 @@
 package pl.twojekursy.invoice;
 
-import pl.twojekursy.post.Post;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
