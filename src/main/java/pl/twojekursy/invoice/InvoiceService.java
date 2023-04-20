@@ -43,6 +43,11 @@ public class InvoiceService {
                 .orElseThrow(EntityNotFoundException::new);
     }
 
+    public Invoice findInvoiceById(Long id) {
+        return invoiceRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+    }
+
     public void update(Long id, UpdateInvoiceRequest updateInvoiceRequest) {
         Invoice invoice = invoiceRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
