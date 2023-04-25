@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.twojekursy.util.LogUtil;
 
 import java.time.LocalDate;
@@ -26,6 +27,7 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
+    @Transactional
     public void create(CreatePostRequest postRequest){
         Post post = new Post(
                 postRequest.getText(),
@@ -48,6 +50,7 @@ public class PostService {
                 .orElseThrow(() -> new EntityNotFoundException("Post not found"));
     }
 
+    @Transactional
     public void update(Long id, UpdatePostRequest updatePostRequest) {
         Post post = postRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
@@ -60,10 +63,12 @@ public class PostService {
         postRepository.save(newPost);
     }
 
+    @Transactional
     public void delete(Long id) {
         postRepository.deleteById(id);
     }
 
+    @Transactional
     public void archive(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
