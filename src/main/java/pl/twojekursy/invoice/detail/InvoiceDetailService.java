@@ -31,7 +31,7 @@ public class InvoiceDetailService {
     }
 
     public ReadInvoiceDetailResponse findById(Long id) {
-        Optional<InvoiceDetail> maybeInvoiceDetail = invoiceDetailRepository.findById(id);
+        Optional<InvoiceDetail> maybeInvoiceDetail = invoiceDetailRepository.findByIdFetchInvoice(id);
         Optional<ReadInvoiceDetailResponse> readInvoiceDetailResponse = maybeInvoiceDetail.map(ReadInvoiceDetailResponse::from);
         return readInvoiceDetailResponse.orElseThrow(EntityNotFoundException::new);
     }
