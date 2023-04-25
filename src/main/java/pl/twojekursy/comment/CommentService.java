@@ -1,8 +1,11 @@
 package pl.twojekursy.comment;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import pl.twojekursy.post.Post;
 import pl.twojekursy.post.PostService;
+
+import java.util.Optional;
 
 @Service
 public class CommentService {
@@ -24,5 +27,12 @@ public class CommentService {
                 post
         );
         commentRepository.save(comment);
+    }
+
+    public ReadCommentResponse findById(Long id) {
+        Optional<Comment> maybeComment = commentRepository.findById(id);
+        Optional<ReadCommentResponse> readCommentResponse = maybeComment.map(ReadCommentResponse::from);
+        ReadCommentResponse comment = readCommentResponse.orElseThrow(EntityNotFoundException::new);
+        return comment;
     }
 }

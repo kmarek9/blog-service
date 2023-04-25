@@ -1,11 +1,10 @@
 package pl.twojekursy.comment;
 
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import pl.twojekursy.post.CreatePostRequest;
+import pl.twojekursy.post.ReadPostResponse;
 
 @RestController
 @RequestMapping("/api/comments")
@@ -21,4 +20,9 @@ public class CommentController {
         commentService.create(createCommentRequest);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ReadCommentResponse> read(@PathVariable("id") Long id){
+        ReadCommentResponse comment = commentService.findById(id);
+        return ResponseEntity.ok(comment);
+    }
 }
