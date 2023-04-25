@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.twojekursy.post.CreatePostRequest;
 import pl.twojekursy.post.ReadPostResponse;
+import pl.twojekursy.post.UpdatePostRequest;
 
 @RestController
 @RequestMapping("/api/comments")
@@ -24,5 +25,11 @@ public class CommentController {
     public ResponseEntity<ReadCommentResponse> read(@PathVariable("id") Long id){
         ReadCommentResponse comment = commentService.findById(id);
         return ResponseEntity.ok(comment);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(@PathVariable("id") Long id, @Valid @RequestBody UpdateCommentRequest updateCommentRequest){
+        commentService.update(id, updateCommentRequest);
+        return ResponseEntity.ok().build();
     }
 }

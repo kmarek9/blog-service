@@ -19,6 +19,7 @@ public class CommentService {
         this.postService = postService;
     }
 
+    @Transactional
     public void create(CreateCommentRequest createCommentRequest){
         Post post = postService.findPostById(createCommentRequest.getPostId());
 
@@ -37,5 +38,17 @@ public class CommentService {
         Optional<ReadCommentResponse> readCommentResponse = maybeComment.map(ReadCommentResponse::from);
         ReadCommentResponse comment = readCommentResponse.orElseThrow(EntityNotFoundException::new);
         return comment;
+    }
+
+    @Transactional
+    public void update(Long id, UpdateCommentRequest updateCommentRequest) {
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+
+        Comment newComment = new Comment(comment);
+        newComment.setAuthor(updateCommentRequest.getAuthor());
+        newComment.setText(updateCommentRequest.getText());
+
+        Comment c = commentRepository.save(newComment);
     }
 }

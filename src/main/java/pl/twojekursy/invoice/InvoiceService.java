@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.twojekursy.util.LogUtil;
 
 import java.time.LocalDate;
@@ -27,6 +28,7 @@ public class InvoiceService {
         this.invoiceRepository = invoiceRepository;
     }
 
+    @Transactional
     public void create(CreateInvoiceRequest invoiceRequest){
         Invoice invoice = new Invoice(
               invoiceRequest.paymentDate(),
@@ -48,6 +50,7 @@ public class InvoiceService {
                 .orElseThrow(EntityNotFoundException::new);
     }
 
+    @Transactional
     public void update(Long id, UpdateInvoiceRequest updateInvoiceRequest) {
         Invoice invoice = invoiceRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
@@ -62,10 +65,12 @@ public class InvoiceService {
         invoiceRepository.save(newInvoice);
     }
 
+    @Transactional
     public void delete(Long id) {
         invoiceRepository.deleteById(id);
     }
 
+    @Transactional
     public void archive(Long id) {
         Invoice invoice = invoiceRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
