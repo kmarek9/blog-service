@@ -1,5 +1,7 @@
 package pl.twojekursy.comment;
 
+import pl.twojekursy.post.ReadPostResponse;
+
 import java.time.LocalDateTime;
 
 public class ReadCommentResponse {
@@ -12,14 +14,14 @@ public class ReadCommentResponse {
 
     private final String author;
 
-    private final Long postId;
+    private final ReadPostResponse post;
 
-    public ReadCommentResponse(Long id, String text, LocalDateTime createdDateTime, String author, Long postId) {
+    public ReadCommentResponse(Long id, String text, LocalDateTime createdDateTime, String author, ReadPostResponse post) {
         this.id = id;
         this.text = text;
         this.createdDateTime = createdDateTime;
         this.author = author;
-        this.postId = postId;
+        this.post = post;
     }
 
     public Long getId() {
@@ -38,8 +40,8 @@ public class ReadCommentResponse {
         return author;
     }
 
-    public Long getPostId() {
-        return postId;
+    public ReadPostResponse getPost() {
+        return post;
     }
 
     public static ReadCommentResponse from(Comment comment){
@@ -48,7 +50,7 @@ public class ReadCommentResponse {
                 comment.getText(),
                 comment.getCreatedDateTime(),
                 comment.getAuthor(),
-                comment.getPost().getId()
+                ReadPostResponse.from(comment.getPost())
         );
     }
 }
