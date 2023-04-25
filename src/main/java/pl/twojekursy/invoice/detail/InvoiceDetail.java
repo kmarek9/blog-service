@@ -43,7 +43,7 @@ public class InvoiceDetail {
     @NotNull
     private BigDecimal price;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Invoice invoice;
 
     public InvoiceDetail() {

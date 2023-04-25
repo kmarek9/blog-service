@@ -1,5 +1,6 @@
 package pl.twojekursy.post;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
@@ -57,8 +58,8 @@ public class Post {
     @Enumerated(EnumType.STRING)
     private PostStatus status;
 
-   // @OneToMany(mappedBy = "post")
-   // private Set<Comment> comments;
+    @OneToMany(mappedBy = "post")
+    private Set<Comment> comments;
 
     public Post(){
 
@@ -156,13 +157,13 @@ public class Post {
         this.lastModifiedDateTime = lastModifiedDateTime;
     }
 
-   /* public Set<Comment> getComments() {
+    public Set<Comment> getComments() {
         return comments;
-    }*/
+    }
 
-  /*  public void setComments(Set<Comment> comments) {
+    public void setComments(Set<Comment> comments) {
         this.comments = comments;
-    }*/
+    }
 
     @Override
     public String toString() {
