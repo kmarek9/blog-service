@@ -47,8 +47,6 @@ public class Comment {
     @NotAudited
     private String author;
 
-    private String ss;
-
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Post post;
 }

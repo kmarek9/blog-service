@@ -1,56 +1,24 @@
 package pl.twojekursy.invoice.detail;
 
+import lombok.Value;
 import pl.twojekursy.invoice.ReadInvoiceResponse;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Value
 public class ReadInvoiceDetailResponse {
-    private final Long id;
+    Long id;
 
-    private final Integer version;
+    Integer version;
 
-    private final LocalDateTime createdDate;
+    LocalDateTime createdDate;
 
-    private final String productName;
+    String productName;
 
-    private final BigDecimal price;
+    BigDecimal price;
 
-    private final ReadInvoiceResponse invoice;
-
-
-    public ReadInvoiceDetailResponse(Long id, Integer version, LocalDateTime createdDate, String productName, BigDecimal price, ReadInvoiceResponse invoice) {
-        this.id = id;
-        this.version = version;
-        this.createdDate = createdDate;
-        this.productName = productName;
-        this.price = price;
-        this.invoice = invoice;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Integer getVersion() {
-        return version;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public ReadInvoiceResponse getInvoice() {
-        return invoice;
-    }
+    ReadInvoiceResponse invoice;
 
     public static ReadInvoiceDetailResponse from(InvoiceDetail invoiceDetail){
         return new ReadInvoiceDetailResponse(

@@ -1,6 +1,7 @@
 package pl.twojekursy.invoice.detail;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.twojekursy.invoice.Invoice;
@@ -9,25 +10,21 @@ import pl.twojekursy.invoice.InvoiceService;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class InvoiceDetailService {
     private final InvoiceDetailRepository invoiceDetailRepository;
 
     private final InvoiceService invoiceService;
 
-    public InvoiceDetailService(InvoiceDetailRepository invoiceDetailRepository, InvoiceService invoiceService) {
-        this.invoiceDetailRepository = invoiceDetailRepository;
-        this.invoiceService = invoiceService;
-    }
-
     @Transactional
     public void create(CreateInvoiceDetailRequest invoiceDetailRequest){
         Invoice invoice = invoiceService.findInvoiceById(invoiceDetailRequest.getInvoiceId());
 
-        InvoiceDetail invoiceDetail = new InvoiceDetail(
-                invoiceDetailRequest.getProductName(),
-                invoiceDetailRequest.getPrice(),
-                invoice
-        );
+        InvoiceDetail invoiceDetail = InvoiceDetail.builder()
+                .invoice(invoice)
+                .price(invoiceDetailRequest.getPrice())
+                .productName(invoiceDetailRequest.getProductName())
+                .build();
 
         invoiceDetailRepository.save(invoiceDetail);
     }
@@ -43,13 +40,19 @@ public class InvoiceDetailService {
         InvoiceDetail invoiceDetail = invoiceDetailRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
 
-        InvoiceDetail newInvoiceDetail = new InvoiceDetail(invoiceDetail.getId(),
+        InvoiceDetail newInvoiceDetail = invoiceDetail.toBuilder()
+                .version(updateInvoiceDetailRequest.getVersion())
+                .productName(updateInvoiceDetailRequest.getProductName())
+                .price(updateInvoiceDetailRequest.getPrice())
+                .build();
+
+/*        InvoiceDetail newInvoiceDetail = new InvoiceDetail(invoiceDetail.getId(),
                 updateInvoiceDetailRequest.getVersion(),
                 invoiceDetail.getCreatedDate(),
                 invoiceDetail.getLastModifiedDate(),
                 updateInvoiceDetailRequest.getProductName(),
                 updateInvoiceDetailRequest.getPrice(),
-                invoiceDetail.getInvoice());
+                invoiceDetail.getInvoice());*/
 
         invoiceDetailRepository.save(newInvoiceDetail);
     }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.*;
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -16,6 +17,12 @@ import java.time.LocalDateTime;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Audited
+@Data
+@ToString(exclude = {"invoice"})
+@EqualsAndHashCode(exclude = {"invoice"})
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
 public class InvoiceDetail {
 
     @Id
@@ -46,90 +53,9 @@ public class InvoiceDetail {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Invoice invoice;
 
-    public InvoiceDetail() {
-    }
-
     public InvoiceDetail(String productName, BigDecimal price, Invoice invoice) {
         this.productName = productName;
         this.price = price;
         this.invoice = invoice;
-    }
-
-    public InvoiceDetail(Long id, Integer version, LocalDateTime createdDate, LocalDateTime lastModifiedDate, String productName, BigDecimal price, Invoice invoice) {
-        this.id = id;
-        this.version = version;
-        this.createdDate = createdDate;
-        this.lastModifiedDate = lastModifiedDate;
-        this.productName = productName;
-        this.price = price;
-        this.invoice = invoice;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Integer getVersion() {
-        return version;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public LocalDateTime getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public Invoice getInvoice() {
-        return invoice;
-    }
-
-    public void setInvoice(Invoice invoice) {
-        this.invoice = invoice;
-    }
-
-    @Override
-    public String toString() {
-        return "InvoiceDetail{" +
-                "id=" + id +
-                ", version=" + version +
-                ", createdDate=" + createdDate +
-                ", lastModifiedDate=" + lastModifiedDate +
-                ", productName='" + productName + '\'' +
-                ", price=" + price +
-                '}';
     }
 }
