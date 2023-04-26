@@ -1,6 +1,7 @@
 package pl.twojekursy.common;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 @ControllerAdvice
+@Slf4j
 public class ErrorHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationEx(MethodArgumentNotValidException ex){
@@ -37,7 +39,7 @@ public class ErrorHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex){
-        System.out.println(ex.getMessage());
+        log.warn("handleHttpMessageNotReadableException", ex);
         return ResponseEntity.badRequest().body(new ErrorResponse("Invalid JSON"));
     }
 
@@ -48,6 +50,7 @@ public class ErrorHandler {
 
     @ExceptionHandler({NoSuchElementException.class, EntityNotFoundException.class, EmptyResultDataAccessException.class})
     public ResponseEntity<Void> handleNotFoundExceptions(RuntimeException ex){
+        log.warn("handleNotFoundExceptions", ex);
         return ResponseEntity.notFound().build();
     }
 
