@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.*;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,6 +17,12 @@ import java.time.LocalDateTime;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Audited
+@Data
+@NoArgsConstructor
+@ToString(exclude = {"post"})
+@EqualsAndHashCode(exclude = {"post"})
+@Builder(toBuilder = true)
+@AllArgsConstructor
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,88 +47,8 @@ public class Comment {
     @NotAudited
     private String author;
 
+    private String ss;
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Post post;
-
-    public Comment(){
-
-    }
-
-    public Comment(String text, String author, Post post) {
-        this.text = text;
-        this.author = author;
-        this.post = post;
-    }
-
-    public Comment(Comment comment) {
-        this.id = comment.id;
-        this.createdDateTime = comment.createdDateTime;
-        this.lastModifiedDateTime = comment.lastModifiedDateTime;
-        this.text = comment.text;
-        this.author = comment.author;
-        this.post = comment.post;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-
-    public String getText() {
-        return text;
-    }
-
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public LocalDateTime getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    public void setCreatedDateTime(LocalDateTime createdDateTime) {
-        this.createdDateTime = createdDateTime;
-    }
-
-    public LocalDateTime getLastModifiedDateTime() {
-        return lastModifiedDateTime;
-    }
-
-    public void setLastModifiedDateTime(LocalDateTime lastModifiedDateTime) {
-        this.lastModifiedDateTime = lastModifiedDateTime;
-    }
-
-    public Post getPost() {
-        return post;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
-
-    @Override
-    public String toString() {
-        return "Comment{" +
-                "id=" + id +
-                ", createdDateTime=" + createdDateTime +
-                ", lastModifiedDateTime=" + lastModifiedDateTime +
-                ", text='" + text + '\'' +
-                ", author='" + author +
-                '}';
-    }
 }

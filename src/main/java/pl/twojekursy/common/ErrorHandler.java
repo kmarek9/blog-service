@@ -55,5 +55,4 @@ public class ErrorHandler {
     public ResponseEntity<Void> handleObjectOptimisticLock(ObjectOptimisticLockingFailureException ex){
         return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
-
 }

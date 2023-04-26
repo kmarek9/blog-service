@@ -1,48 +1,22 @@
 package pl.twojekursy.comment;
 
+import lombok.Value;
 import pl.twojekursy.post.ReadPostResponse;
 
 import java.time.LocalDateTime;
 
+@Value
 public class ReadCommentResponse {
 
-    private final Long id;
+     Long id;
 
-    private final String text;
+    String text;
 
-    private final LocalDateTime createdDateTime;
+    LocalDateTime createdDateTime;
 
-    private final String author;
+    String author;
 
-    private final ReadPostResponse post;
-
-    public ReadCommentResponse(Long id, String text, LocalDateTime createdDateTime, String author, ReadPostResponse post) {
-        this.id = id;
-        this.text = text;
-        this.createdDateTime = createdDateTime;
-        this.author = author;
-        this.post = post;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public LocalDateTime getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public ReadPostResponse getPost() {
-        return post;
-    }
+    ReadPostResponse post;
 
     public static ReadCommentResponse from(Comment comment){
         return new ReadCommentResponse(

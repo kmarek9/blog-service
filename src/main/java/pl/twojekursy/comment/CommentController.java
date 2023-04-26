@@ -1,20 +1,15 @@
 package pl.twojekursy.comment;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.twojekursy.post.CreatePostRequest;
-import pl.twojekursy.post.ReadPostResponse;
-import pl.twojekursy.post.UpdatePostRequest;
 
 @RestController
 @RequestMapping("/api/comments")
+@RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
-
-    public CommentController(CommentService commentService) {
-        this.commentService = commentService;
-    }
 
     @PostMapping
     public void create(@Valid @RequestBody CreateCommentRequest createCommentRequest){
