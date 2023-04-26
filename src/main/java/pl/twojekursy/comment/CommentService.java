@@ -49,6 +49,6 @@ public class CommentService {
         newComment.setAuthor(updateCommentRequest.getAuthor());
         newComment.setText(updateCommentRequest.getText());
 
-        Comment c = commentRepository.save(newComment);
+        commentRepository.save(newComment);
     }
 }

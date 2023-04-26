@@ -3,8 +3,6 @@ package pl.twojekursy.invoice.detail;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.twojekursy.comment.CreateCommentRequest;
-import pl.twojekursy.comment.ReadCommentResponse;
 
 @RestController
 @RequestMapping("/api/invoice-details")
@@ -24,5 +22,11 @@ public class InvoiceDetailController {
     public ResponseEntity<ReadInvoiceDetailResponse> read(@PathVariable("id") Long id){
         ReadInvoiceDetailResponse invoiceDetailResponse = invoiceDetailService.findById(id);
         return ResponseEntity.ok(invoiceDetailResponse);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(@PathVariable("id") Long id, @Valid @RequestBody UpdateInvoiceDetailRequest updateInvoiceDetailRequest){
+        invoiceDetailService.update(id, updateInvoiceDetailRequest);
+        return ResponseEntity.ok().build();
     }
 }

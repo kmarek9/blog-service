@@ -55,6 +55,16 @@ public class InvoiceDetail {
         this.invoice = invoice;
     }
 
+    public InvoiceDetail(Long id, Integer version, LocalDateTime createdDate, LocalDateTime lastModifiedDate, String productName, BigDecimal price, Invoice invoice) {
+        this.id = id;
+        this.version = version;
+        this.createdDate = createdDate;
+        this.lastModifiedDate = lastModifiedDate;
+        this.productName = productName;
+        this.price = price;
+        this.invoice = invoice;
+    }
+
     public Long getId() {
         return id;
     }
