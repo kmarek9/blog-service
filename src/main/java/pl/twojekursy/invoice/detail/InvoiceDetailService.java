@@ -2,6 +2,7 @@ package pl.twojekursy.invoice.detail;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.twojekursy.invoice.Invoice;
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class InvoiceDetailService {
     private final InvoiceDetailRepository invoiceDetailRepository;
 
@@ -25,8 +27,11 @@ public class InvoiceDetailService {
                 .price(invoiceDetailRequest.getPrice())
                 .productName(invoiceDetailRequest.getProductName())
                 .build();
+        //wypisac invoiceDetail poziom debug
+        log.debug("invoiceDetail: {}", invoiceDetail);
 
-        invoiceDetailRepository.save(invoiceDetail);
+        //wypisać wynik 'save' na poziom info
+        log.info("wynik save: {}", invoiceDetailRepository.save(invoiceDetail));
     }
 
     public ReadInvoiceDetailResponse findById(Long id) {
