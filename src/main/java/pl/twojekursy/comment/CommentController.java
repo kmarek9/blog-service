@@ -21,15 +21,8 @@ public class CommentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ReadCommentResponse> read(@PathVariable("id") Long id){
-        log.info("metoda read,  parametry: {}", id);
-        long start = System.currentTimeMillis();
-
         ReadCommentResponse comment = commentService.findById(id);
-        ResponseEntity<ReadCommentResponse> ok = ResponseEntity.ok(comment);
-
-        long end = System.currentTimeMillis();
-        log.info("koniec metody read,  trwala: {} ms ", (end-start));
-        return ok;
+        return ResponseEntity.ok(comment);
     }
 
     @PutMapping("/{id}")
