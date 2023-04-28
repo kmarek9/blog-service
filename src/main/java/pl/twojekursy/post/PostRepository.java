@@ -18,6 +18,9 @@ public interface PostRepository extends CrudRepository<Post, Long>, JpaSpecifica
     @Query("select p from Post p")
     List<Post> find();
 
+    @Query("select p from Post p left join fetch p.comments where p.id=:id")
+    Optional<Post> findByIdFetchComments(Long id);
+
     @Query("select p from Post p where p.text like %:textContaining% " +
             "and p.status='ACTIVE' " +
             "and (p.publicationDate is null or p.publicationDate <= :publicationDate ) ")

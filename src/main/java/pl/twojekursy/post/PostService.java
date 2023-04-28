@@ -40,7 +40,7 @@ public class PostService {
     }
 
     public ReadPostResponse findById(Long id) {
-        return postRepository.findById(id)
+        return postRepository.findByIdFetchComments(id)
                 .map(ReadPostResponse::from)
                 .orElseThrow(EntityNotFoundException::new);
     }
