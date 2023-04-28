@@ -3,10 +3,14 @@ package pl.twojekursy.invoice.detail;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.twojekursy.invoice.Invoice;
 import pl.twojekursy.invoice.InvoiceService;
+import pl.twojekursy.util.SpecificationUtil;
 
 import java.util.Optional;
 
@@ -60,5 +64,19 @@ public class InvoiceDetailService {
                 invoiceDetail.getInvoice());*/
 
         invoiceDetailRepository.save(newInvoiceDetail);
+    }
+
+    public Page<ReadInvoiceDetailResponse> find(Long invoiceId, Pageable pageable) {
+        return invoiceDetailRepository.findAll(prepareSpec(invoiceId) , pageable)
+                .map(ReadInvoiceDetailResponse::from);
+    }
+
+    private Specification<InvoiceDetail> prepareSpec(Long invoiceId) {
+        return (root, query, criteriaBuilder) -> {
+            if(!SpecificationUtil.isCountQuery(query)){
+                root.fetch("invoice");
+            }
+            return criteriaBuilder.equal(root.get("invoice").get("id"), invoiceId);
+        };
     }
 }

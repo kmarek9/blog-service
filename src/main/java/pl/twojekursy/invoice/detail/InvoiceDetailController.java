@@ -2,8 +2,11 @@ package pl.twojekursy.invoice.detail;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.twojekursy.comment.ReadCommentResponse;
 
 @RestController
 @RequestMapping("/api/invoice-details")
@@ -26,5 +29,11 @@ public class InvoiceDetailController {
     public ResponseEntity<Void> update(@PathVariable("id") Long id, @Valid @RequestBody UpdateInvoiceDetailRequest updateInvoiceDetailRequest){
         invoiceDetailService.update(id, updateInvoiceDetailRequest);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<ReadInvoiceDetailResponse>> find(@RequestParam(value = "inid") Long invoiceId,
+                                                          Pageable pageable){
+        return ResponseEntity.ok(invoiceDetailService.find(invoiceId, pageable));
     }
 }
