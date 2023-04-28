@@ -3,11 +3,8 @@ package pl.twojekursy.comment;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.twojekursy.post.FindPostResponse;
 
 
 @RestController
@@ -32,11 +29,5 @@ public class CommentController {
     public ResponseEntity<Void> update(@PathVariable("id") Long id, @Valid @RequestBody UpdateCommentRequest updateCommentRequest){
         commentService.update(id, updateCommentRequest);
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<ReadCommentResponse>> find(@RequestParam(value = "pid") Long postId,
-                                                          Pageable pageable){
-        return ResponseEntity.ok(commentService.find(postId, pageable));
     }
 }

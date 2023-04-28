@@ -1,17 +1,12 @@
 package pl.twojekursy.comment;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.twojekursy.post.Post;
 import pl.twojekursy.post.PostService;
-import pl.twojekursy.util.SpecificationUtil;
 
 import java.util.Optional;
 
@@ -60,20 +55,4 @@ public class CommentService {
 
         commentRepository.save(newComment);
     }
-
-    public Page<ReadCommentResponse> find(Long postId, Pageable pageable) {
-        return commentRepository.findAll(prepareSpecification(postId), pageable)
-                .map(ReadCommentResponse::from);
-    }
-
-    private Specification<Comment> prepareSpecification(Long postId) {
-        return (root, query, criteriaBuilder) -> {
-            if(!SpecificationUtil.isCountQuery(query)) {
-                root.fetch("post");
-            }
-
-            return criteriaBuilder.equal(root.get("post").get("id"), postId);
-        };
-    }
 }
-
