@@ -1,6 +1,7 @@
 package pl.twojekursy.post;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.twojekursy.util.LogUtil;
+import pl.twojekursy.util.SpecificationUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -79,7 +81,7 @@ public class PostService {
     }
 
     public Page<FindPostResponse> find(FindPostRequest findPostRequest, Pageable pageable) {
-        Specification<Post> specification = preparePostSpecification(findPostRequest);
+        Specification<Post> specification = preparePostSpecificationUsingPredicates(findPostRequest);
         return postRepository.findAll(specification, pageable)
                 .map(FindPostResponse::from);
     }
@@ -87,6 +89,10 @@ public class PostService {
     private static Specification<Post> preparePostSpecificationUsingPredicates(FindPostRequest findPostRequest) {
         return (root, query, criteriaBuilder) ->
         {
+            if(!SpecificationUtil.isCountQuery(query)){
+                root.fetch("comments", JoinType.LEFT);
+            }
+
             List<Predicate> predicates = new ArrayList<>();
 
             if(findPostRequest.postStatuses()!=null ) {
