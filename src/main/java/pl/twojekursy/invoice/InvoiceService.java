@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,15 +12,19 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.twojekursy.invoice.detail.InvoiceDetail;
 import pl.twojekursy.util.LogUtil;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
 @Service
+@Slf4j
 public class InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
@@ -34,7 +39,13 @@ public class InvoiceService {
               invoiceRequest.paymentDate(),
               invoiceRequest.buyer(),
               invoiceRequest.seller()
-        ) ;
+
+        );
+
+        Set<InvoiceDetail> invoiceDetails = new HashSet<>();
+        invoiceDetails.add(InvoiceDetail.builder().productName("product1").price(BigDecimal.ONE).invoice(invoice).build());
+        invoiceDetails.add(InvoiceDetail.builder().productName("product2").price(new BigDecimal("23.67")).invoice(invoice).build());
+        invoice.setInvoiceDetails(invoiceDetails);
 
         invoiceRepository.save(invoice);
     }
@@ -61,6 +72,16 @@ public class InvoiceService {
         newInvoice.setSeller(updateInvoiceRequest.seller());
         newInvoice.setBuyer(updateInvoiceRequest.buyer());
         newInvoice.setVersion(updateInvoiceRequest.version());
+
+        Set<InvoiceDetail> invoiceDetails = newInvoice.getInvoiceDetails();
+        InvoiceDetail invoiceDetail = invoiceDetails.iterator().next();
+        //invoiceDetail.setInvoice(null);
+        log.info("Usuwam ID o id = {}", invoiceDetail.getId());
+        invoiceDetail.setProductName("nowa wartosc");
+       // invoiceDetails.remove(invoiceDetail);
+        // ....
+
+        invoiceDetails.add(InvoiceDetail.builder().productName("productNew").price(BigDecimal.TEN).invoice(newInvoice).build());
 
         invoiceRepository.save(newInvoice);
     }
