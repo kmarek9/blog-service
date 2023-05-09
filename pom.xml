@@ -77,8 +77,15 @@
 					<url>jdbc:mariadb://localhost:3306/blog</url>
 					<username>root</username>
 					<password />
+
+					<referenceDriver>org.mariadb.jdbc.Driver</referenceDriver>
+					<referenceUrl>jdbc:mariadb://localhost:3306/blog2</referenceUrl>
+					<referenceUsername>root</referenceUsername>
+					<referencePassword />
+
 					<changeLogFile>db/changelog/changelog.xml</changeLogFile>
 					<outputChangeLogFile>src/main/resources/db/changelog/outputChangeLog.xml</outputChangeLogFile>
+					<diffChangeLogFile>src/main/resources/db/changelog/diff-outputChangeLog.xml</diffChangeLogFile>
 				</configuration>
 			</plugin>
 		</plugins>

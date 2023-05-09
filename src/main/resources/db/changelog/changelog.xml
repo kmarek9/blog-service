@@ -232,4 +232,42 @@
         </preConditions>
         <dropTable tableName="account" />
     </changeSet>
+
+    <changeSet author="marekk" id="BS-12334-1">
+        <createTable tableName="user">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="version" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date_time" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date_time" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="login" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="marekk" id="BS-12334-2">
+        <createTable tableName="user_aud">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="rev" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column defaultValueComputed="NULL" name="revtype" type="TINYINT"/>
+            <column defaultValueComputed="NULL" name="created_date_time" type="datetime"/>
+            <column defaultValueComputed="NULL" name="last_modified_date_time" type="datetime"/>
+            <column name="login" type="VARCHAR(100)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="marekk" id="BS-12334-3">
+        <addForeignKeyConstraint baseColumnNames="rev" baseTableName="user_aud" constraintName="FK_USER_AUD_REVINFO" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="rev" referencedTableName="revinfo" validate="true"/>
+    </changeSet>
+
 </databaseChangeLog>
