@@ -225,4 +225,11 @@
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet id="BS-1243-2" author="marekk" >
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="account"/>
+        </preConditions>
+        <dropTable tableName="account" />
+    </changeSet>
 </databaseChangeLog>
