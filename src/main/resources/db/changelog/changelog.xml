@@ -1,0 +1,228 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="marekk (generated)" id="1683547657035-1">
+        <createTable tableName="comment">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_date_time" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date_time" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="text" type="VARCHAR(5000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="post_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="marekk (generated)" id="1683547657035-2">
+        <createTable tableName="comment_aud">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="rev" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column defaultValueComputed="NULL" name="revtype" type="TINYINT"/>
+            <column defaultValueComputed="NULL" name="created_date_time" type="datetime"/>
+            <column defaultValueComputed="NULL" name="last_modified_date_time" type="datetime"/>
+            <column name="text" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="post_id" type="BIGINT"/>
+            <column name="ss" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="marekk (generated)" id="1683547657035-3">
+        <createTable tableName="invoice">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="buyer" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="payment_date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="seller" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="marekk (generated)" id="1683547657035-4">
+        <createTable tableName="invoice_aud">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="rev" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column defaultValueComputed="NULL" name="revtype" type="TINYINT"/>
+            <column name="buyer" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="created_date" type="datetime"/>
+            <column defaultValueComputed="NULL" name="last_modified_date" type="datetime"/>
+            <column defaultValueComputed="NULL" name="payment_date" type="date"/>
+            <column name="status" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="marekk (generated)" id="1683547657035-5">
+        <createTable tableName="invoice_detail">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="DECIMAL(38, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="invoice_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="marekk (generated)" id="1683547657035-6">
+        <createTable tableName="invoice_detail_aud">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="rev" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column defaultValueComputed="NULL" name="revtype" type="TINYINT"/>
+            <column defaultValueComputed="NULL" name="created_date" type="datetime"/>
+            <column defaultValueComputed="NULL" name="last_modified_date" type="datetime"/>
+            <column defaultValueComputed="NULL" name="price" type="DECIMAL(38, 2)"/>
+            <column name="product_name" type="VARCHAR(255)"/>
+            <column defaultValueComputed="NULL" name="invoice_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="marekk (generated)" id="1683547657035-7">
+        <createTable tableName="post">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="author" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date_time" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date_time" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NULL" name="publication_date" type="datetime"/>
+            <column name="scope" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="text" type="VARCHAR(5000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="marekk (generated)" id="1683547657035-8">
+        <createTable tableName="post_aud">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="rev" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column defaultValueComputed="NULL" name="revtype" type="TINYINT"/>
+            <column defaultValueComputed="NULL" name="created_date_time" type="datetime"/>
+            <column defaultValueComputed="NULL" name="last_modified_date_time" type="datetime"/>
+            <column defaultValueComputed="NULL" name="publication_date" type="datetime"/>
+            <column name="scope" type="VARCHAR(255)"/>
+            <column name="status" type="VARCHAR(255)"/>
+            <column name="text" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="marekk (generated)" id="1683547657035-9">
+        <createTable tableName="revinfo">
+            <column autoIncrement="true" name="rev" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column defaultValueComputed="NULL" name="revtstmp" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="marekk (generated)" id="1683547657035-10">
+        <createIndex indexName="IDX_INVOICE_DETAIL_INVOICE_ID" tableName="invoice_detail">
+            <column name="invoice_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="marekk (generated)" id="1683547657035-11">
+        <createIndex indexName="FKs1slvnkuemjsq2kj4h3vhx7i1" tableName="comment">
+            <column name="post_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="marekk (generated)" id="1683547657035-12">
+        <addForeignKeyConstraint baseColumnNames="rev" baseTableName="invoice_aud" constraintName="FK57bloicw9h0k4c7xwn0i7u29p" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="rev" referencedTableName="revinfo" validate="true"/>
+    </changeSet>
+    <changeSet author="marekk (generated)" id="1683547657035-13">
+        <addForeignKeyConstraint baseColumnNames="rev" baseTableName="post_aud" constraintName="FKeywddrxhmaq98hs8wpgbbdrq2" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="rev" referencedTableName="revinfo" validate="true"/>
+    </changeSet>
+    <changeSet author="marekk (generated)" id="1683547657035-14">
+        <addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="invoice_detail" constraintName="FKit1rbx4thcr6gx6bm3gxub3y4" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="invoice" validate="true"/>
+    </changeSet>
+    <changeSet author="marekk (generated)" id="1683547657035-15">
+        <addForeignKeyConstraint baseColumnNames="rev" baseTableName="comment_aud" constraintName="FKo1q5p3hhua10tousqu4m2hn3n" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="rev" referencedTableName="revinfo" validate="true"/>
+    </changeSet>
+    <changeSet author="marekk (generated)" id="1683547657035-16">
+        <addForeignKeyConstraint baseColumnNames="rev" baseTableName="invoice_detail_aud" constraintName="FKp69b3ojgv0p0x1nui05rokgc3" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="rev" referencedTableName="revinfo" validate="true"/>
+    </changeSet>
+    <changeSet author="marekk (generated)" id="1683547657035-17">
+        <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="comment" constraintName="FKs1slvnkuemjsq2kj4h3vhx7i1" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="post" validate="true"/>
+    </changeSet>
+
+    <changeSet author="marekk" id="BS-1243">
+        <createTable tableName="account">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_date_time" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date_time" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="login" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
