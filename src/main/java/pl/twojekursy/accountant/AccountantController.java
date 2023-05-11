@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.twojekursy.user.JoinToGroupRequest;
 
 
 @RestController
@@ -19,5 +20,10 @@ public class AccountantController {
     @PostMapping
     public void create(@Valid @RequestBody CreateAccountantRequest accountantRequest){
         accountantService.create(accountantRequest);
+    }
+
+    @PostMapping("/attach-client")
+    public void attachClient(@Valid @RequestBody AttachClientRequest attachClientRequest){
+        accountantService.attachClient(attachClientRequest);
     }
 }

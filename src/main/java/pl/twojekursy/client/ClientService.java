@@ -1,5 +1,6 @@
 package pl.twojekursy.client;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,11 @@ public class ClientService {
                 .build();
 
         clientRepository.save(client);
+    }
+
+    public Client findById(Long clientId) {
+        return clientRepository.findById(clientId)
+                .orElseThrow(EntityNotFoundException::new);
     }
 }
 
