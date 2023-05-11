@@ -36,5 +36,15 @@ public class AccountantService {
 
         accountant.getClients().add(client);
     }
+
+    @Transactional
+    public void detachClient(DetachClientRequest detachClientRequest) {
+        Accountant accountant = accountantRepository.findByIdFetchGroupsInfo(detachClientRequest.getAccountantId())
+                .orElseThrow(EntityNotFoundException::new);
+
+        Client client = clientService.findById(detachClientRequest.getClientId());
+
+        accountant.getClients().remove(client);
+    }
 }
 

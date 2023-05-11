@@ -26,4 +26,9 @@ public class AccountantController {
     public void attachClient(@Valid @RequestBody AttachClientRequest attachClientRequest){
         accountantService.attachClient(attachClientRequest);
     }
+
+    @PostMapping("/detach-client")
+    public void detachClient(@Valid @RequestBody DetachClientRequest detachClientRequest){
+        accountantService.detachClient(detachClientRequest);
+    }
 }

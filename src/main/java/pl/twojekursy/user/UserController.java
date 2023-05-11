@@ -27,4 +27,9 @@ public class UserController {
     public void joinToGroup(@Valid @RequestBody JoinToGroupRequest joinToGroupRequest){
         userService.joinToGroup(joinToGroupRequest);
     }
+
+    @PostMapping("/leave-group")
+    public void levaeToGroup(@Valid @RequestBody LeaveGroupRequest leaveGroupRequest){
+        userService.leaveToGroup(leaveGroupRequest);
+    }
 }

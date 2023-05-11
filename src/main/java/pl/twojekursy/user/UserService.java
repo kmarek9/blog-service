@@ -34,5 +34,15 @@ public class UserService {
 
         user.getGroupsInfo().add(groupInfo);
     }
+
+    @Transactional
+    public void leaveToGroup(LeaveGroupRequest leaveGroupRequest) {
+        User user = userRepository.findById(leaveGroupRequest.getUserId())
+                .orElseThrow(EntityNotFoundException::new);
+
+        GroupInfo groupInfo = groupInfoService.findById(leaveGroupRequest.getGroupId());
+
+        user.getGroupsInfo().remove(groupInfo);
+    }
 }
 
