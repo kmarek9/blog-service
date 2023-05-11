@@ -396,4 +396,39 @@
     <changeSet author="marekk" id="BS-3336-3">
         <addForeignKeyConstraint baseColumnNames="rev" baseTableName="client_aud" constraintName="FK_CLIENT_AUD_REVINFO" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="rev" referencedTableName="revinfo" validate="true"/>
     </changeSet>
+
+    <changeSet author="marekk" id="BS-3559-1">
+        <createTable tableName="user_info_groups_info">
+            <column name="users_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="groups_info_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="marekk" id="BS-3559-2">
+        <createTable tableName="user_info_groups_info_aud">
+            <column name="rev" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="users_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="groups_info_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column defaultValueComputed="NULL" name="revtype" type="TINYINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="marekk" id="BS-3559-3">
+        <addForeignKeyConstraint baseColumnNames="groups_info_id" baseTableName="user_info_groups_info" constraintName="FK_user_info_groups_info_group_info" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="group_info" validate="true"/>
+    </changeSet>
+    <changeSet author="marekk" id="BS-3559-4">
+        <addForeignKeyConstraint baseColumnNames="rev" baseTableName="user_info_groups_info_aud" constraintName="FK_user_info_groups_info_aud_revinfo" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="rev" referencedTableName="revinfo" validate="true"/>
+    </changeSet>
+    <changeSet author="marekk" id="BS-3559-5">
+        <addForeignKeyConstraint baseColumnNames="users_id" baseTableName="user_info_groups_info" constraintName="FK_user_info_groups_info_user_info" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="user_info" validate="true"/>
+    </changeSet>
 </databaseChangeLog>
