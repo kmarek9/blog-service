@@ -29,5 +29,10 @@ public class GroupInfoService {
 
         groupInfoRepository.save(groupInfo);
     }
+
+    public GroupInfo findById(Long groupId) {
+        return groupInfoRepository.findById(groupId)
+                .orElseThrow(EntityNotFoundException::new);
+    }
 }
 

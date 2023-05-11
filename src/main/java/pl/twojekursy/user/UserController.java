@@ -22,4 +22,9 @@ public class UserController {
     public void create(@Valid @RequestBody CreateUserRequest userRequest){
         userService.create(userRequest);
     }
+
+    @PostMapping("/join-group")
+    public void joinToGroup(@Valid @RequestBody JoinToGroupRequest joinToGroupRequest){
+        userService.joinToGroup(joinToGroupRequest);
+    }
 }
