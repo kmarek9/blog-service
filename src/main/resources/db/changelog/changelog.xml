@@ -431,4 +431,39 @@
     <changeSet author="marekk" id="BS-3559-5">
         <addForeignKeyConstraint baseColumnNames="users_id" baseTableName="user_info_groups_info" constraintName="FK_user_info_groups_info_user_info" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="user_info" validate="true"/>
     </changeSet>
+
+    <changeSet author="marekk" id="BS-3600-1">
+        <createTable tableName="accountant_clients">
+            <column name="accountants_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="clients_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="marekk" id="BS-3600-2">
+        <createTable tableName="accountant_clients_aud">
+            <column name="rev" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="accountants_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="clients_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column defaultValueComputed="NULL" name="revtype" type="TINYINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="marekk" id="BS-3600-3">
+        <addForeignKeyConstraint baseColumnNames="rev" baseTableName="accountant_clients_aud" constraintName="FK8u3cm0ypubw1cmayvy31vqh9g" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="rev" referencedTableName="revinfo" validate="true"/>
+    </changeSet>
+    <changeSet author="marekk" id="BS-3600-4">
+        <addForeignKeyConstraint baseColumnNames="clients_id" baseTableName="accountant_clients" constraintName="FKb9y2x34vr7ga3xofoj6uumllj" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="client" validate="true"/>
+    </changeSet>
+    <changeSet author="marekk" id="BS-3600-5">
+        <addForeignKeyConstraint baseColumnNames="accountants_id" baseTableName="accountant_clients" constraintName="FK_accountant_clients_accountant" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="accountant" validate="true"/>
+    </changeSet>
 </databaseChangeLog>

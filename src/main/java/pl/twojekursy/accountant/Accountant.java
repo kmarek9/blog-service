@@ -9,16 +9,18 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import pl.twojekursy.client.Client;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Audited
 @Data
 @NoArgsConstructor
-@ToString()
-@EqualsAndHashCode()
+@ToString(exclude = "clients")
+@EqualsAndHashCode(exclude = "clients")
 @Builder(toBuilder = true)
 @AllArgsConstructor
 public class Accountant {
@@ -42,4 +44,7 @@ public class Accountant {
     @NotNull
     @Size(max = 100)
     private String name;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Set<Client> clients;
 }
