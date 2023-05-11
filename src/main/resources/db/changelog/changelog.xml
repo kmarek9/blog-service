@@ -308,4 +308,17 @@
         <addForeignKeyConstraint baseColumnNames="rev" baseTableName="accountant_aud" constraintName="FK_ACCOUNTANT_AUD_REVINFO" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="rev" referencedTableName="revinfo" validate="true"/>
     </changeSet>
 
+    <changeSet author="marekk" id="BS-3334-1" >
+        <renameTable oldTableName="user" newTableName="user_info" />
+    </changeSet>
+    <changeSet author="marekk" id="BS-3334-2" >
+        <renameTable oldTableName="user_aud" newTableName="user_info_aud" />
+    </changeSet>
+    <changeSet author="marekk" id="BS-3334-3" >
+        <dropForeignKeyConstraint baseTableName="user_info_aud" constraintName="FK_USER_AUD_REVINFO"/>
+    </changeSet>
+    <changeSet author="marekk" id="BS-3334-4">
+        <addForeignKeyConstraint baseColumnNames="rev" baseTableName="user_info_aud" constraintName="FK_USER_INFO_AUD_REVINFO" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="rev" referencedTableName="revinfo" validate="true"/>
+    </changeSet>
+
 </databaseChangeLog>
