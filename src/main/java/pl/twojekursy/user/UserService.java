@@ -1,15 +1,22 @@
 package pl.twojekursy.user;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.twojekursy.groupinfo.GroupInfo;
 import pl.twojekursy.groupinfo.GroupInfoService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +59,27 @@ public class UserService {
         Page<User> users=  userRepository.find(groupId,
                 PageRequest.of(page, size, Sort.by(Sort.Order.asc("login"))));
         return users.map(FindUserResponse::from);
+    }
+
+    public Page<FindUserResponse> find(FindUserRequest findUserRequest, Pageable pageable) {
+        Page<User> users=  userRepository.findAll(prepareSpec(findUserRequest), pageable);
+        return users.map(FindUserResponse::from);
+    }
+
+    private Specification<User> prepareSpec(FindUserRequest findUserRequest) {
+        return (root, query, criteriaBuilder) -> {
+            Join<User, GroupInfo> joinGroupsInfo = root.join("groupsInfo");
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            predicates.add(criteriaBuilder.equal(joinGroupsInfo.get("id"), findUserRequest.groupId()));
+
+            if(findUserRequest.login()!=null ) {
+                predicates.add(criteriaBuilder.like(root.get("login"), "%" + findUserRequest.login() + "%"));
+            }
+
+            return criteriaBuilder.and( predicates.toArray(new Predicate[0]));
+        };
     }
 }
 

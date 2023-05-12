@@ -1,7 +1,6 @@
 package pl.twojekursy.groupinfo;
 
 import lombok.Value;
-import pl.twojekursy.user.User;
 
 @Value
 public class FindGroupInfoResponse {

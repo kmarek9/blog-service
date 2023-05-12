@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.twojekursy.client.Client;
 import pl.twojekursy.client.ClientService;
-import pl.twojekursy.groupinfo.FindGroupInfoResponse;
 
 @Service
 @RequiredArgsConstructor

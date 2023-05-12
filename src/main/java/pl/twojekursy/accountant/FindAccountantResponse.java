@@ -1,7 +1,6 @@
 package pl.twojekursy.accountant;
 
 import lombok.Value;
-import pl.twojekursy.groupinfo.GroupInfo;
 
 @Value
 public class FindAccountantResponse {

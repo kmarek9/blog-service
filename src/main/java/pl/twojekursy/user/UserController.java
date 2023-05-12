@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +36,12 @@ public class UserController {
                                                        @RequestParam int page,
                                                        @RequestParam int size){
         Page<FindUserResponse> body = userService.find(groupId, page, size);
+        return ResponseEntity.ok(body);
+    }
+
+    @PostMapping("/find")
+    public ResponseEntity<Page<FindUserResponse>> find(@Valid @RequestBody FindUserRequest findUserRequest, Pageable pageable){
+        Page<FindUserResponse> body = userService.find(findUserRequest, pageable);
         return ResponseEntity.ok(body);
     }
 }

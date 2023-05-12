@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.twojekursy.accountant.FindAccountantResponse;
 
 
 @RestController
@@ -26,6 +25,12 @@ public class ClientController {
     public ResponseEntity<Page<FindClientResponse>> find(@RequestParam(value = "acc_id") Long accountantId,
                                                              Pageable pageable){
         Page<FindClientResponse> body = clientService.find(accountantId, pageable);
+        return ResponseEntity.ok(body);
+    }
+
+    @PostMapping("/find")
+    public ResponseEntity<Page<FindClientResponse>> find(@Valid @RequestBody FindClientRequest findClientRequest, Pageable pageable){
+        Page<FindClientResponse> body = clientService.find(findClientRequest, pageable);
         return ResponseEntity.ok(body);
     }
 }
