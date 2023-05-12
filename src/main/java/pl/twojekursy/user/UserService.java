@@ -55,6 +55,11 @@ public class UserService {
         user.getGroupsInfo().remove(groupInfo);
     }
 
+    public User findById(Long userId){
+        return userRepository.findById(userId)
+                .orElseThrow(EntityNotFoundException::new);
+    }
+
     public Page<FindUserResponse> find(Long groupId, int page, int size) {
         Page<User> users=  userRepository.find(groupId,
                 PageRequest.of(page, size, Sort.by(Sort.Order.asc("login"))));
