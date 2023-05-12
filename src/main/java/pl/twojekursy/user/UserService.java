@@ -3,6 +3,9 @@ package pl.twojekursy.user;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.twojekursy.groupinfo.GroupInfo;
@@ -43,6 +46,12 @@ public class UserService {
         GroupInfo groupInfo = groupInfoService.findById(leaveGroupRequest.getGroupId());
 
         user.getGroupsInfo().remove(groupInfo);
+    }
+
+    public Page<FindUserResponse> find(Long groupId, int page, int size) {
+        Page<User> users=  userRepository.find(groupId,
+                PageRequest.of(page, size, Sort.by(Sort.Order.asc("login"))));
+        return users.map(FindUserResponse::from);
     }
 }
 

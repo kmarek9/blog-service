@@ -2,7 +2,6 @@ package pl.twojekursy.post;
 
 import lombok.Value;
 import pl.twojekursy.comment.Comment;
-import pl.twojekursy.comment.ReadCommentResponse;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;

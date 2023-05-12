@@ -3,12 +3,9 @@ package pl.twojekursy.user;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import pl.twojekursy.groupinfo.CreateGroupInfoRequest;
-import pl.twojekursy.groupinfo.GroupInfoService;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -29,7 +26,15 @@ public class UserController {
     }
 
     @PostMapping("/leave-group")
-    public void levaeToGroup(@Valid @RequestBody LeaveGroupRequest leaveGroupRequest){
+    public void leaveToGroup(@Valid @RequestBody LeaveGroupRequest leaveGroupRequest){
         userService.leaveToGroup(leaveGroupRequest);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<FindUserResponse>> find(@RequestParam(value = "g_id") Long groupId,
+                                                       @RequestParam int page,
+                                                       @RequestParam int size){
+        Page<FindUserResponse> body = userService.find(groupId, page, size);
+        return ResponseEntity.ok(body);
     }
 }
