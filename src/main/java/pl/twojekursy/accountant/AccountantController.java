@@ -3,10 +3,11 @@ package pl.twojekursy.accountant;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import pl.twojekursy.groupinfo.FindGroupInfoResponse;
 
 
 @RestController
@@ -29,5 +30,12 @@ public class AccountantController {
     @PostMapping("/detach-client")
     public void detachClient(@Valid @RequestBody DetachClientRequest detachClientRequest){
         accountantService.detachClient(detachClientRequest);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<FindAccountantResponse>> find(@RequestParam(value = "c_id") Long clientId,
+                                                            Pageable pageable){
+        Page<FindAccountantResponse> body = accountantService.find(clientId, pageable);
+        return ResponseEntity.ok(body);
     }
 }

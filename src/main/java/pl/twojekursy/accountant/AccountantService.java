@@ -3,10 +3,13 @@ package pl.twojekursy.accountant;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.twojekursy.client.Client;
 import pl.twojekursy.client.ClientService;
+import pl.twojekursy.groupinfo.FindGroupInfoResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +46,11 @@ public class AccountantService {
         Client client = clientService.findById(detachClientRequest.getClientId());
 
         accountant.getClients().remove(client);
+    }
+
+    public Page<FindAccountantResponse> find(Long clientId, Pageable pageable) {
+        return accountantRepository.find(clientId, pageable)
+                .map(FindAccountantResponse::from);
     }
 }
 
