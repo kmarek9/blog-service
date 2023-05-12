@@ -523,4 +523,50 @@
         </preConditions>
         <dropColumn tableName="comment_aud" columnName="ss" />
     </changeSet>
+
+    <changeSet author="marekk" id="BS-3603-1">
+        <createTable tableName="user_settings">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="version" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date_time" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date_time" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="show_panel1" type="BIT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dark_mode" type="BIT">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+    </changeSet>
+    <changeSet author="marekk" id="BS-3603-2">
+        <createTable tableName="user_settings_aud">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="rev" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column defaultValueComputed="NULL" name="revtype" type="TINYINT"/>
+            <column defaultValueComputed="NULL" name="created_date_time" type="datetime"/>
+            <column defaultValueComputed="NULL" name="last_modified_date_time" type="datetime"/>
+            <column defaultValueBoolean="false" name="show_panel1" type="BIT"/>
+            <column defaultValueBoolean="false" name="dark_mode" type="BIT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="marekk" id="BS-3603-3">
+        <addForeignKeyConstraint baseColumnNames="rev" baseTableName="user_settings_aud" constraintName="FK9xkrjhvokyevb273062ngltx0" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="rev" referencedTableName="revinfo" validate="true"/>
+    </changeSet>
+    <changeSet author="marekk" id="BS-3603-4">
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="user_settings" constraintName="FKa6tmccynt9fma4790ihl5gk0q" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="user_info" validate="true"/>
+    </changeSet>
 </databaseChangeLog>

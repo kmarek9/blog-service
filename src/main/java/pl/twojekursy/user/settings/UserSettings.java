@@ -1,33 +1,27 @@
-package pl.twojekursy.user;
+package pl.twojekursy.user.settings;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import pl.twojekursy.address.Address;
-import pl.twojekursy.groupinfo.GroupInfo;
+import pl.twojekursy.user.User;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Audited
 @Data
 @NoArgsConstructor
-@ToString(exclude = {"groupsInfo", "address"})
-@EqualsAndHashCode(exclude = {"groupsInfo", "address"})
+@ToString(exclude = "user")
+@EqualsAndHashCode(exclude = "user")
 @Builder(toBuilder = true)
 @AllArgsConstructor
-@Table(name = "user_info")
-public class User {
+public class UserSettings {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Version
@@ -42,14 +36,14 @@ public class User {
     @NotNull
     private LocalDateTime lastModifiedDateTime;
 
-    @NotBlank
     @NotNull
-    @Size(max = 100)
-    private String login;
+    private Boolean showPanel1;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    private Set<GroupInfo> groupsInfo;
+    @NotNull
+    private Boolean darkMode;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
-    private Address address;
+    @OneToOne(optional = false , fetch = FetchType.LAZY)
+    @MapsId
+    @JoinColumn(name = "id")
+    private User user;
 }

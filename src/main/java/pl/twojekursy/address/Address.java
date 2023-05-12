@@ -1,4 +1,4 @@
-package pl.twojekursy;
+package pl.twojekursy.address;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
