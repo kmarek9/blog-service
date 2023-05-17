@@ -2,7 +2,7 @@ package pl.twojekursy.accountant;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 class FindAccountantResponseTest {
 
@@ -20,8 +20,11 @@ class FindAccountantResponseTest {
         FindAccountantResponse result = FindAccountantResponse.from(accountant);
 
         // then
-        assertNotNull(result);
+        /*assertNotNull(result);
         assertEquals(expectedId, result.getId());
-        assertEquals(expectedName, result.getName());
+        assertEquals(expectedName, result.getName());*/
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(expectedId);
+        assertThat(result.getName()).isEqualTo(expectedName);
     }
 }

@@ -1,7 +1,8 @@
 package pl.twojekursy.user;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.*;
 
 class FindUserResponseTest {
 
@@ -20,8 +21,11 @@ class FindUserResponseTest {
         FindUserResponse response = FindUserResponse.from(user);
 
         // then
-        Assertions.assertNotNull(response);
+        /*Assertions.assertNotNull(response);
         Assertions.assertEquals(expectedId, response.getId());
-        Assertions.assertEquals(expectedLogin, response.getLogin());
+        Assertions.assertEquals(expectedLogin, response.getLogin());*/
+        assertThat(response).isNotNull();
+        assertThat(response.getId()).isEqualTo(expectedId);
+        assertThat(response.getLogin()).isEqualTo(expectedLogin);
     }
 }
