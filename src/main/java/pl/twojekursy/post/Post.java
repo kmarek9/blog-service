@@ -5,6 +5,9 @@ import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
@@ -18,6 +21,9 @@ import java.util.Set;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Audited
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,10 +65,6 @@ public class Post {
 
     @OneToMany(mappedBy = "post")
     private Set<Comment> comments;
-
-    public Post(){
-
-    }
 
     public Post(Post old){
         this.id = old.id;

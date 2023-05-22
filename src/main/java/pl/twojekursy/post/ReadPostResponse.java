@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Value
-public class ReadPostResponse {
+class ReadPostResponse {
 
     Long id;
 
