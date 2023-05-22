@@ -86,7 +86,7 @@ public class PostService {
                 .map(FindPostResponse::from);
     }
 
-    private static Specification<Post> preparePostSpecificationUsingPredicates(FindPostRequest findPostRequest) {
+    private Specification<Post> preparePostSpecificationUsingPredicates(FindPostRequest findPostRequest) {
         return (root, query, criteriaBuilder) ->
         {
             if(!SpecificationUtil.isCountQuery(query)){
@@ -120,7 +120,7 @@ public class PostService {
         };
     }
 
-    private static Specification<Post> preparePostSpecification(FindPostRequest findPostRequest) {
+    private Specification<Post> preparePostSpecification(FindPostRequest findPostRequest) {
         Specification<Post> specification = Specification.where(null);
 
         if(findPostRequest.postStatuses()!=null) {
