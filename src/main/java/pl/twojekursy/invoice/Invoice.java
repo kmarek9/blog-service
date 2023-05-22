@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
@@ -18,6 +21,9 @@ import java.util.Set;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Audited
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Invoice {
 
     @Id
@@ -61,9 +67,6 @@ public class Invoice {
 
     @OneToMany(mappedBy = "invoice", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE }, orphanRemoval = true )
     private Set<InvoiceDetail> invoiceDetails;
-
-    public Invoice() {
-    }
 
     public Invoice(Invoice old) {
         this.id = old.id;
