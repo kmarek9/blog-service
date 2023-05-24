@@ -1,24 +1,15 @@
 package pl.twojekursy.invoice;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import pl.twojekursy.BaseIT;
 import pl.twojekursy.invoice.detail.InvoiceDetail;
-import pl.twojekursy.post.CreatePostRequest;
-import pl.twojekursy.post.Post;
-import pl.twojekursy.post.PostScope;
-import pl.twojekursy.post.PostStatus;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -27,13 +18,12 @@ class InvoiceControllerIT extends BaseIT {
     @Test
     void givenWrongRequest_whenCreate_thenBadRequest() throws Exception {
         // given
-        String content = "{}";
+        CreateInvoiceRequest request = new CreateInvoiceRequest(
+                null,null,null
+        );
 
         // when
-        ResultActions resultActions = mockMvc.perform(post("/api/invoices")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content)
-        );
+        ResultActions resultActions = performPost("/api/invoices", request);
 
         // then
         resultActions.andExpect(status().isBadRequest())
@@ -54,16 +44,10 @@ class InvoiceControllerIT extends BaseIT {
                 paymentDate,
                 buyer,
                 seller
-
         );
-
-        String content = objectMapper.writeValueAsString(request);
 
         // when
-        ResultActions resultActions = mockMvc.perform(post("/api/invoices")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content)
-        );
+        ResultActions resultActions = performPost("/api/invoices", request);
 
         // then
         resultActions.andExpect(status().isOk());

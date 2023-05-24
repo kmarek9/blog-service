@@ -15,9 +15,9 @@ import pl.twojekursy.post.PostStatus;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static pl.twojekursy.comment.ReadCommentResponse.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+import static pl.twojekursy.comment.ReadCommentResponse.PostResponse;
 
 class CommentServiceTest extends BaseUnitTest {
     @InjectMocks

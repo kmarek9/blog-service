@@ -1,42 +1,26 @@
 package pl.twojekursy.post;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.EntityManager;
-import org.assertj.core.api.Assertions;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import pl.twojekursy.BaseIT;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class PostControllerIT extends BaseIT {
 
     @Test
     void givenWrongRequest_whenCreate_thenBadRequest() throws Exception {
         // given
-        String content = "{}";
-
+        CreatePostRequest request = new CreatePostRequest(null, null, null, null);
         // when
-        ResultActions resultActions = mockMvc.perform(post("/api/posts")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content)
-        );
+        ResultActions resultActions = performPost("/api/posts", request);
 
         // then
         resultActions.andExpect(status().isBadRequest())
@@ -61,13 +45,8 @@ class PostControllerIT extends BaseIT {
                 publicationDate
         );
 
-        String content = objectMapper.writeValueAsString(request);
-
         // when
-        ResultActions resultActions = mockMvc.perform(post("/api/posts")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content)
-        );
+        ResultActions resultActions = performPost("/api/posts", request);
 
         // then
         resultActions.andExpect(status().isOk());
@@ -101,4 +80,5 @@ class PostControllerIT extends BaseIT {
 
         assertThat(post.getComments()).isEmpty();
     }
+
 }
