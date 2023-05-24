@@ -1,7 +1,5 @@
 package pl.twojekursy.util;
 
-import lombok.extern.slf4j.Slf4j;
-
 public class PeselValidator {
 
     //1. sprawdz dlugosc czy rowna 11 znakow
