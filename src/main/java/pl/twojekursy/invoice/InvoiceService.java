@@ -73,15 +73,10 @@ public class InvoiceService {
         newInvoice.setBuyer(updateInvoiceRequest.buyer());
         newInvoice.setVersion(updateInvoiceRequest.version());
 
-        Set<InvoiceDetail> invoiceDetails = newInvoice.getInvoiceDetails();
+/*        Set<InvoiceDetail> invoiceDetails = newInvoice.getInvoiceDetails();
         InvoiceDetail invoiceDetail = invoiceDetails.iterator().next();
-        //invoiceDetail.setInvoice(null);
-        log.info("Usuwam ID o id = {}", invoiceDetail.getId());
         invoiceDetail.setProductName("nowa wartosc");
-       // invoiceDetails.remove(invoiceDetail);
-        // ....
-
-        invoiceDetails.add(InvoiceDetail.builder().productName("productNew").price(BigDecimal.TEN).invoice(newInvoice).build());
+        invoiceDetails.add(InvoiceDetail.builder().productName("productNew").price(BigDecimal.TEN).invoice(newInvoice).build());*/
 
         invoiceRepository.save(newInvoice);
     }
