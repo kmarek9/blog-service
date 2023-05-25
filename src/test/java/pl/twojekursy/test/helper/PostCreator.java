@@ -41,4 +41,14 @@ public class PostCreator {
 
         return post;
     }
+
+    @Transactional
+    public Post createPostWithComments(int commentsNumber) {
+        Post post = createPost();
+        for (int i = 0; i < commentsNumber; i++) {
+            commentCreator.createComment(post, i);
+        }
+
+        return post;
+    }
 }

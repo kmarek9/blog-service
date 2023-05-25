@@ -22,4 +22,15 @@ public class CommentCreator {
         entityManager.persist(comment);
         return comment;
     }
+
+    @Transactional
+    public Comment createComment(Post post, int number) {
+        Comment comment = Comment.builder()
+                .author("author")
+                .text("text"+number)
+                .post(post)
+                .build();
+        entityManager.persist(comment);
+        return comment;
+    }
 }

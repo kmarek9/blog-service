@@ -1,10 +1,12 @@
 package pl.twojekursy.post;
 
+import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 import pl.twojekursy.BaseIT;
 import pl.twojekursy.comment.Comment;
+import pl.twojekursy.test.helper.CommentCreator;
 import pl.twojekursy.test.helper.PostCreator;
 
 import java.time.LocalDateTime;
@@ -17,15 +19,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class PostControllerIT extends BaseIT {
 
+    private static final String API_POSTS_URL_PREFIX = "/api/posts";
     @Autowired
     private PostCreator postCreator;
+
+    @Autowired
+    private CommentCreator commentCreator;
+
 
     @Test
     void givenWrongRequest_whenCreate_thenBadRequest() throws Exception {
         // given
         CreatePostRequest request = new CreatePostRequest(null, null, null, null);
         // when
-        ResultActions resultActions = performPost("/api/posts", request);
+        ResultActions resultActions = performPost(API_POSTS_URL_PREFIX, request);
 
         // then
         resultActions.andExpect(status().isBadRequest())
@@ -51,7 +58,7 @@ class PostControllerIT extends BaseIT {
         );
 
         // when
-        ResultActions resultActions = performPost("/api/posts", request);
+        ResultActions resultActions = performPost(API_POSTS_URL_PREFIX, request);
 
         // then
         resultActions.andExpect(status().isOk());
@@ -93,7 +100,7 @@ class PostControllerIT extends BaseIT {
         Long id = 1000L;
 
         // when
-        ResultActions resultActions = performPut("/api/posts/{id}", id, request);
+        ResultActions resultActions = performPut(API_POSTS_URL_PREFIX + "/{id}", id, request);
 
         // then
         resultActions.andExpect(status().isBadRequest())
@@ -110,7 +117,7 @@ class PostControllerIT extends BaseIT {
         Long id = 1000L;
 
         // when
-        ResultActions resultActions = performPut("/api/posts/{id}", id, request);
+        ResultActions resultActions = performPut(API_POSTS_URL_PREFIX + "/{id}", id, request);
 
         // then
         resultActions.andExpect(status().isNotFound())
@@ -129,7 +136,7 @@ class PostControllerIT extends BaseIT {
         Long id = post.getId();
 
         // when
-        ResultActions resultActions = performPut("/api/posts/{id}", id, request);
+        ResultActions resultActions = performPut(API_POSTS_URL_PREFIX + "/{id}", id, request);
 
         // then
         resultActions.andExpect(status().isOk())
@@ -174,7 +181,7 @@ class PostControllerIT extends BaseIT {
         Long id = post.getId();
 
         // when
-        ResultActions resultActions = performPut("/api/posts/{id}", id, request);
+        ResultActions resultActions = performPut(API_POSTS_URL_PREFIX + "/{id}", id, request);
 
         // then
         resultActions.andExpect(status().isConflict())
@@ -201,5 +208,63 @@ class PostControllerIT extends BaseIT {
                         post.getScope(),
                         post.getStatus()
                 );
+    }
+
+
+    @Test
+    void givenNotExistingPost_whenRead_thenNotFound() throws Exception {
+        // given
+        Long id = 1000L;
+
+        // when
+        ResultActions resultActions = performGet(API_POSTS_URL_PREFIX + "/{id}", id);
+
+        // then
+        resultActions.andExpect(status().isNotFound())
+                .andExpect(content().string(is(emptyString())))
+        ;
+    }
+
+    @Test
+    void givenExistingPost_whenRead_thenReturnResponse() throws Exception {
+        // given
+        Post post = postCreator.createPost();
+        Long postId = post.getId();
+        Comment comment1 = commentCreator.createComment(post, 1);
+        Comment comment2 = commentCreator.createComment(post, 2);
+        Comment comment3 = commentCreator.createComment(post, 3);
+
+        List<Comment> commentList = List.of(comment3, comment2, comment1);
+
+        // when
+        ResultActions resultActions = performGet(API_POSTS_URL_PREFIX + "/{id}", postId);
+
+        // then
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.version").value(post.getVersion()))
+                .andExpect(jsonPath("$.text").value(post.getText()))
+                .andExpect(jsonPath("$.scope").value(post.getScope().name()))
+                .andExpect(jsonPath("$.author").value(post.getAuthor()))
+                .andExpect(jsonPath("$.publicationDate").value(post.getPublicationDate().toString()))
+                .andExpect(jsonPath("$.status").value(post.getStatus().name()))
+                //.andExpect(jsonPath("$.createdDateTime").value(post.getCreatedDateTime().truncatedTo(ChronoUnit.MICROS).toString()))
+                .andExpect(jsonPath("$.comments[*]", hasSize(commentList.size())))
+                .andExpect(jsonPath("$.comments[*].id", contains(comment3.getId().intValue(), comment2.getId().intValue(), comment1.getId().intValue())));
+
+        String contentAsString = resultActions.andReturn().getResponse().getContentAsString();
+        LocalDateTime postCreatedDateTime = parseDateTime(contentAsString, "$.createdDateTime");
+        assertThat(postCreatedDateTime).isEqualToIgnoringNanos(post.getCreatedDateTime());
+
+        // tests for comments
+        int i =0;
+        for (Comment comment : commentList) {
+            resultActions.andExpect(jsonPath("$.comments[" + i + "].text").value(comment.getText()))
+                    //.andExpect(jsonPath("$.comments[" + i + "].createdDateTime").value(comment.getCreatedDateTime().truncatedTo(ChronoUnit.MICROS).toString()))
+                    .andExpect(jsonPath("$.comments[" + i + "].author").value(comment.getAuthor()));
+
+            LocalDateTime commentCreatedDateTime = parseDateTime(contentAsString, "$.comments[" + i + "].createdDateTime");
+            assertThat(commentCreatedDateTime).isEqualToIgnoringNanos(comment.getCreatedDateTime());
+            i++;
+        }
     }
 }
