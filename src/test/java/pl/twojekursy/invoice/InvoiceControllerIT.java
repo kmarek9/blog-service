@@ -12,6 +12,7 @@ import pl.twojekursy.post.UpdatePostRequest;
 import pl.twojekursy.test.helper.InvoiceCreator;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -210,5 +211,43 @@ class InvoiceControllerIT extends BaseIT {
                         invoice.getPaymentDate(),
                         invoice.getStatus()
                 );
+    }
+
+    @Test
+    void givenNotExistingInvoice_whenRead_thenNotFound() throws Exception {
+        // given
+        Long id = 1000L;
+
+        // when
+        ResultActions resultActions = performGet(API_INVOICES_PREFIX_URL + "/{id}", id);
+
+        // then
+        resultActions.andExpect(status().isNotFound())
+                .andExpect(content().string(is(emptyString())))
+        ;
+    }
+
+    @Test
+    void givenExistingInvoice_whenRead_thenReturnResponse() throws Exception {
+        // given
+        Invoice invoice = invoiceCreator.createInvoiceWithOneInvoiceDetail();
+        Long invoiceId = invoice.getId();
+
+        // when
+        ResultActions resultActions = performGet(API_INVOICES_PREFIX_URL + "/{id}", invoiceId);
+
+        // then
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(invoice.getId().intValue()))
+                .andExpect(jsonPath("$.version").value(invoice.getVersion()))
+                .andExpect(jsonPath("$.paymentDate").value(invoice.getPaymentDate().toString()))
+                .andExpect(jsonPath("$.buyer").value(invoice.getBuyer()))
+                .andExpect(jsonPath("$.seller").value(invoice.getSeller()))
+                .andExpect(jsonPath("$.status").value(invoice.getStatus().name()));
+
+        String contentAsString = resultActions.andReturn().getResponse().getContentAsString();
+
+        LocalDateTime createdDateTime = parseDateTime(contentAsString, "$.createdDate");
+        assertThat(createdDateTime).isEqualToIgnoringNanos(invoice.getCreatedDate());
     }
 }

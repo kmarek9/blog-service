@@ -59,9 +59,7 @@ public class BaseIT {
     }
 
     protected LocalDateTime parseDateTime(String json, String jsonPath) {
-        return LocalDateTime.parse(
-                JsonPath.compile(jsonPath)
-                        .read(json)
+        return LocalDateTime.parse(JsonPath.compile(jsonPath).read(json)
         );
     }
 }
