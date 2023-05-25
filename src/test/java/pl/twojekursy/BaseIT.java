@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -39,6 +40,16 @@ public class BaseIT {
 
         // when
         return mockMvc.perform(post(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+        );
+    }
+
+    protected ResultActions performPut(String url, Long  id, Object request) throws Exception {
+        String content = objectMapper.writeValueAsString(request);
+
+        // when
+        return mockMvc.perform(put(url, id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
         );
