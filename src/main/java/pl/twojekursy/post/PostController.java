@@ -54,10 +54,10 @@ public class PostController {
     //response:
     //id,  text skrócony do 50 znaków, datę utworzenie i autor
     @GetMapping
-    public ResponseEntity<Page<FindPostResponse>> find(@RequestParam(value = "q", defaultValue = "") String textContaining,
+    public ResponseEntity<Page<FindPostByGetMethodResponse>> find(@RequestParam(value = "q", defaultValue = "") String textContaining,
                                            @RequestParam int page,
                                            @RequestParam int size){
-        Page<FindPostResponse> body = postService.find(textContaining, page, size);
+        Page<FindPostByGetMethodResponse> body = postService.find(textContaining, page, size);
         return ResponseEntity.ok(body);
     }
 

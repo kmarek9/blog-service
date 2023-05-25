@@ -12,9 +12,11 @@ import pl.twojekursy.test.helper.PostCreator;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class PostControllerIT extends BaseIT {
@@ -267,4 +269,68 @@ class PostControllerIT extends BaseIT {
             i++;
         }
     }
+
+    @Test
+    void givenNoPostsInDb_whenGetFind_thenEmptyList() throws Exception {
+        // given
+
+        // when
+        ResultActions resultActions = performGet(API_POSTS_URL_PREFIX,
+                Map.of(
+                        "q", "text",
+                        "page", "0",
+                        "size", "3"
+                )
+        );
+
+        // then
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[*]", is(empty())))
+        ;
+    }
+
+    @Test
+    void givenPosts_whenGetFind_thenCorrectResponse() throws Exception {
+        // given
+
+        // PLEASE DO NOT CHANGE ORDER OF CREATED POSTS
+        Post publishedAndActive1 = postCreator.createPost();
+        Post publishedAndActive2 = postCreator.createPost(post -> post.setPublicationDate(null));
+
+        //not matching by text
+        postCreator.createPost(post -> post.setText("nie pasuje"));
+
+        Post publishedAndActive3 = postCreator.createPost();
+
+        // not matching - deleted
+        postCreator.createPost(post -> post.setStatus(PostStatus.DELETED));
+
+        Post publishedAndActive4 = postCreator.createPost();
+
+        //not matching - not published
+        Post notPublished = postCreator.createPost(post -> post.setPublicationDate(LocalDateTime.now().plusDays(1)));
+
+        Post publishedAndActive5 = postCreator.createPost();
+
+        Thread.sleep(1100);
+        // when
+        ResultActions resultActions = performGet(API_POSTS_URL_PREFIX,
+                Map.of(
+                        "q", "ex",
+                        "page", "0",
+                        "size", "3"
+                )
+        );
+
+        // then
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements").value(5))
+                .andExpect(jsonPath("$.content[*]", hasSize(3)))
+                .andExpect(jsonPath("$.content[*].id", contains(
+                        publishedAndActive5.getId().intValue(),
+                        publishedAndActive4.getId().intValue(),
+                        publishedAndActive3.getId().intValue()))
+                );
+    }
+
 }

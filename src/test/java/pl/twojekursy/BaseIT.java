@@ -11,8 +11,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -56,6 +58,12 @@ public class BaseIT {
     protected ResultActions performGet(String url, Long  id) throws Exception {
         return mockMvc.perform(get(url, id)
         );
+    }
+
+    protected ResultActions performGet(String url, Map<String,String> params) throws Exception {
+        MockHttpServletRequestBuilder requestBuilder = get(url);
+        params.forEach(requestBuilder::param);
+        return mockMvc.perform(requestBuilder);
     }
 
     protected LocalDateTime parseDateTime(String json, String jsonPath) {

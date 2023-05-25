@@ -10,6 +10,7 @@ import pl.twojekursy.post.PostStatus;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.function.Consumer;
 
 @Component
 public class PostCreator {
@@ -22,7 +23,7 @@ public class PostCreator {
 
     @Transactional
     public Post createPost() {
-        LocalDateTime publicationDate = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.SECONDS);
+        LocalDateTime publicationDate = LocalDateTime.now().plus(1000, ChronoUnit.MILLIS).truncatedTo(ChronoUnit.SECONDS);
         Post post = Post.builder()
                 .author("author")
                 .text("text")
@@ -30,6 +31,15 @@ public class PostCreator {
                 .publicationDate(publicationDate)
                 .status(PostStatus.ACTIVE)
                 .build();
+        entityManager.persist(post);
+        return post;
+    }
+
+    @Transactional
+    public Post createPost(Consumer<Post> modifier) {
+        Post post = createPost();
+
+        modifier.accept(post);
         entityManager.persist(post);
         return post;
     }

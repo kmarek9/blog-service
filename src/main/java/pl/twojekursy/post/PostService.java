@@ -155,14 +155,14 @@ public class PostService {
         return specification;
     }
 
-    public Page<FindPostResponse> find(String textContaining,
+    public Page<FindPostByGetMethodResponse> find(String textContaining,
                      int page,
                      int size) {
 
         return postRepository.findActiveAndPublished(textContaining,
                         LocalDateTime.now(),
                         PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdDateTime"))))
-                .map(FindPostResponse::from);
+                .map(FindPostByGetMethodResponse::from);
     }
 
     public void find2() {
