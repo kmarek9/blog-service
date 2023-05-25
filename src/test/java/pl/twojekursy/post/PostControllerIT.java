@@ -247,7 +247,7 @@ class PostControllerIT extends BaseIT {
                 .andExpect(jsonPath("$.text").value(post.getText()))
                 .andExpect(jsonPath("$.scope").value(post.getScope().name()))
                 .andExpect(jsonPath("$.author").value(post.getAuthor()))
-                .andExpect(jsonPath("$.publicationDate").value(post.getPublicationDate().toString()))
+                .andExpect(jsonPath("$.publicationDate", is(nullValue())))
                 .andExpect(jsonPath("$.status").value(post.getStatus().name()))
                 //.andExpect(jsonPath("$.createdDateTime").value(post.getCreatedDateTime().truncatedTo(ChronoUnit.MICROS).toString()))
                 .andExpect(jsonPath("$.comments[*]", hasSize(commentList.size())))

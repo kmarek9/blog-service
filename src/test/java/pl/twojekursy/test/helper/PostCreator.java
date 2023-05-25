@@ -23,12 +23,11 @@ public class PostCreator {
 
     @Transactional
     public Post createPost() {
-        LocalDateTime publicationDate = LocalDateTime.now().plus(1000, ChronoUnit.MILLIS).truncatedTo(ChronoUnit.SECONDS);
         Post post = Post.builder()
                 .author("author")
                 .text("text")
                 .scope(PostScope.PUBLIC)
-                .publicationDate(publicationDate)
+                .publicationDate(null)
                 .status(PostStatus.ACTIVE)
                 .build();
         entityManager.persist(post);
