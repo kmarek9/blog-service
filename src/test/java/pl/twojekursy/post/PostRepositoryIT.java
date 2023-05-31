@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import pl.twojekursy.BaseRespositoryIT;
 import pl.twojekursy.BaseServiceIT;
 import pl.twojekursy.test.helper.PostCreator;
 

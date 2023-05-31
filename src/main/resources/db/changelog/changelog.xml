@@ -569,4 +569,17 @@
     <changeSet author="marekk" id="BS-3603-4">
         <addForeignKeyConstraint baseColumnNames="id" baseTableName="user_settings" constraintName="FKa6tmccynt9fma4790ihl5gk0q" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="user_info" validate="true"/>
     </changeSet>
+
+    <changeSet author="marekk " id="BS-4000-1">
+        <addColumn tableName="user_info">
+            <column name="password" type="VARCHAR(255)" >
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="marekk" id="BS-4000-2">
+        <addColumn tableName="user_info_aud">
+            <column name="password" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

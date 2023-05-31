@@ -4,11 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 import pl.twojekursy.BaseIT;
-import pl.twojekursy.comment.Comment;
 import pl.twojekursy.invoice.detail.InvoiceDetail;
-import pl.twojekursy.post.Post;
-import pl.twojekursy.post.PostScope;
-import pl.twojekursy.post.UpdatePostRequest;
 import pl.twojekursy.test.helper.InvoiceCreator;
 
 import java.time.LocalDate;
@@ -18,7 +14,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 class InvoiceControllerIT extends BaseIT {
     private static final String API_INVOICES_PREFIX_URL = "/api/invoices";

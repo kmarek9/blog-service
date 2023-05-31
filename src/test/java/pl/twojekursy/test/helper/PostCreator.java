@@ -8,8 +8,6 @@ import pl.twojekursy.post.Post;
 import pl.twojekursy.post.PostScope;
 import pl.twojekursy.post.PostStatus;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.function.Consumer;
 
 @Component

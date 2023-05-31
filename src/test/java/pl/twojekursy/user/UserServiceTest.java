@@ -8,6 +8,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.twojekursy.BaseUnitTest;
 import pl.twojekursy.groupinfo.GroupInfo;
 import pl.twojekursy.groupinfo.GroupInfoService;
@@ -29,13 +30,18 @@ class UserServiceTest extends BaseUnitTest {
     @Mock
     private GroupInfoService groupInfoService;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @Captor
     private ArgumentCaptor<User> userCaptor;
 
     @Test
     void givenCorrectRequest_whenCreate_thenCreateUser() {
         // given
-        CreateUserRequest createUserRequest = new CreateUserRequest("login");
+        String encodedPass = "encodedPass";
+        CreateUserRequest createUserRequest = new CreateUserRequest("login", "password");
+        when(passwordEncoder.encode(createUserRequest.getPassword())).thenReturn(encodedPass);
 
         // when
         underTest.create(createUserRequest);
@@ -46,6 +52,7 @@ class UserServiceTest extends BaseUnitTest {
         User user = userCaptor.getValue();
         assertThat(user).isNotNull();
         assertThat(user.getLogin()).isEqualTo(createUserRequest.getLogin());
+        assertThat(user.getPassword()).isEqualTo(encodedPass);
         assertThat(user.getId()).isNull();
         assertThat(user.getVersion()).isNull();
         assertThat(user.getCreatedDateTime()).isNull();

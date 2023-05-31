@@ -10,6 +10,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.twojekursy.groupinfo.GroupInfo;
@@ -21,15 +25,18 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
     private final GroupInfoService groupInfoService;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void create(CreateUserRequest userRequest){
         User user = User.builder()
                 .login(userRequest.getLogin())
+                .password(passwordEncoder.encode(userRequest.getPassword()))
                 .build();
 
         userRepository.save(user);
@@ -85,6 +92,12 @@ public class UserService {
 
             return criteriaBuilder.and( predicates.toArray(new Predicate[0]));
         };
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByLogin(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }
 
