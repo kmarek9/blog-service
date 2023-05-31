@@ -29,21 +29,6 @@ public class SecurityConfig {
     }
 
     @Bean
-    public InMemoryUserDetailsManager userDetailsManager(PasswordEncoder passwordEncoder){
-        UserDetails user1 = User.withUsername("marek")
-                .password(passwordEncoder().encode("zegarek"))
-                .authorities("ADMIN")
-                .build();
-
-        UserDetails user2 = User.withUsername("marek2")
-                .password(passwordEncoder().encode("zegarek2"))
-                .roles("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(user1, user2);
-    }
-
-    @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
