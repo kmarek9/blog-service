@@ -17,6 +17,13 @@ import pl.twojekursy.user.UserRole;
 @EnableWebSecurity
 //@EnableMethodSecurity
 public class SecurityConfig {
+
+    //zad  dom - Comments
+    // C - admin lub user
+    // R - public
+    // u - admin lub user
+    // Lista - public
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -26,8 +33,13 @@ public class SecurityConfig {
 
                 .requestMatchers(HttpMethod.POST, "/api/users", "/api/posts/find")
                     .permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/posts/*", "/api/posts")
+                .requestMatchers(HttpMethod.GET,
+                        "/api/posts/*", "/api/posts",
+                        "/api/comments", "/api/comments/*")
                     .permitAll()
+
+                .requestMatchers(HttpMethod.POST, "/api/comments").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.USER.name())
+                .requestMatchers(HttpMethod.PUT, "/api/comments").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.USER.name())
 
                 .requestMatchers(HttpMethod.GET, "/api/groups-info").hasAuthority(UserRole.ADMIN.name())
 
