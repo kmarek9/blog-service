@@ -53,6 +53,7 @@ class UserServiceTest extends BaseUnitTest {
         assertThat(user).isNotNull();
         assertThat(user.getLogin()).isEqualTo(createUserRequest.getLogin());
         assertThat(user.getPassword()).isEqualTo(encodedPass);
+        assertThat(user.getRole()).isEqualTo(UserRole.USER);
         assertThat(user.getId()).isNull();
         assertThat(user.getVersion()).isNull();
         assertThat(user.getCreatedDateTime()).isNull();

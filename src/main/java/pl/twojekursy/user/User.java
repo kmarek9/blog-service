@@ -55,6 +55,10 @@ public class User implements UserDetails {
     @NotNull
     private String password;
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<GroupInfo> groupsInfo;
 
@@ -63,7 +67,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Set.of(new SimpleGrantedAuthority("USER"));
+        return Set.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override

@@ -582,4 +582,31 @@
             <column name="password" type="VARCHAR(255)"/>
         </addColumn>
     </changeSet>
+
+    <changeSet  author="marekk"  id="BS-4001-1">
+        <addUniqueConstraint columnNames="login" tableName="user_info" />
+    </changeSet>
+
+    <changeSet author="marekk " id="BS-4001-2">
+        <addColumn tableName="user_info">
+            <column name="role" type="VARCHAR(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="marekk" id="BS-4001-3">
+        <addColumn tableName="user_info_aud">
+            <column name="role" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="marekk" id="BS-4001-4">
+        <update tableName="user_info">
+            <column name="role" value="USER"/>
+        </update>
+    </changeSet>
+
+    <changeSet author="marekk"  id="BS-4001-5">
+        <addNotNullConstraint columnName="role" tableName="user_info" columnDataType="VARCHAR(255)" />
+    </changeSet>
+
 </databaseChangeLog>

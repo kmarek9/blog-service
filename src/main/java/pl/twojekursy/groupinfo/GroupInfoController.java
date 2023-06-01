@@ -22,6 +22,7 @@ public class GroupInfoController {
     }
 
     @GetMapping
+    //@PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Page<FindGroupInfoResponse>> find(@RequestParam(value = "u_id") Long userId,
                                                        Pageable pageable){
         Page<FindGroupInfoResponse> body = groupInfoService.find(userId, pageable);
