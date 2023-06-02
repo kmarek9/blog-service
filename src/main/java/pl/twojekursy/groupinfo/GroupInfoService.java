@@ -7,12 +7,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.twojekursy.security.LoggedUserProvider;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class GroupInfoService {
     private final GroupInfoRepository groupInfoRepository;
+
+    private final LoggedUserProvider loggedUserProvider;
 
     @Transactional
     public void create(CreateGroupInfoRequest groupInfoRequest){
@@ -31,6 +34,11 @@ public class GroupInfoService {
     public Page<FindGroupInfoResponse> find(Long userId, Pageable pageable) {
         return groupInfoRepository.find(userId, pageable)
             .map(FindGroupInfoResponse::from);
+    }
+
+    public Page<FindGroupInfoResponse> findForLoggedUser(Pageable pageable) {
+        Long id = loggedUserProvider.provideLoggedUser().getId();
+        return find(id, pageable);
     }
 }
 
