@@ -80,6 +80,8 @@ public class Post {
         this.author = old.author;
         this.publicationDate = old.publicationDate;
         this.status = old.status;
+        this.user = old.user;
+        this.comments = old.comments;
     }
 
     public Post(String text, PostScope scope, String author, LocalDateTime publicationDate, User user) {
@@ -192,5 +194,9 @@ public class Post {
                 ", publicationDate=" + publicationDate +
                 ", status=" + status +
                 '}';
+    }
+
+    public boolean isAuthor(Long userId){
+        return user.getId().equals(userId);
     }
 }

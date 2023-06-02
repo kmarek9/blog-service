@@ -29,13 +29,16 @@ public class PostService {
 
     private final LoggedUserProvider loggedUserProvider;
 
-    public PostService(PostRepository postRepository, LoggedUserProvider loggedUserProvider) {
+    private final PostAuthorizationChecker postAuthorizationChecker ;
+
+    public PostService(PostRepository postRepository, LoggedUserProvider loggedUserProvider, PostAuthorizationChecker postAuthorizationChecker) {
         this.postRepository = postRepository;
         this.loggedUserProvider = loggedUserProvider;
+        this.postAuthorizationChecker = postAuthorizationChecker;
     }
 
     @Transactional
-    public void create(CreatePostRequest postRequest){
+    public void create(CreatePostRequest postRequest) {
         User user = loggedUserProvider.provideLoggedUser();
 
         Post post = new Post(
@@ -62,8 +65,11 @@ public class PostService {
 
     @Transactional
     public void update(Long id, UpdatePostRequest updatePostRequest) {
+        User user = loggedUserProvider.provideLoggedUser();
         Post post = postRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
+
+        postAuthorizationChecker.checkPermissions(user, post);
 
         Post newPost = new Post(post);
         newPost.setText(updatePostRequest.getText());
@@ -75,13 +81,22 @@ public class PostService {
 
     @Transactional
     public void delete(Long id) {
+        User user = loggedUserProvider.provideLoggedUser();
+        Post post = postRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+
+        postAuthorizationChecker.checkPermissions(user, post);
+
         postRepository.deleteById(id);
     }
 
     @Transactional
     public void archive(Long id) {
+        User user = loggedUserProvider.provideLoggedUser();
         Post post = postRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
+
+        postAuthorizationChecker.checkPermissions(user, post);
 
         Post newPost = new Post(post);
         newPost.setStatus(PostStatus.DELETED);
@@ -97,53 +112,53 @@ public class PostService {
     private Specification<Post> preparePostSpecificationUsingPredicates(FindPostRequest findPostRequest) {
         return (root, query, criteriaBuilder) ->
         {
-            if(!SpecificationUtil.isCountQuery(query)){
+            if (!SpecificationUtil.isCountQuery(query)) {
                 root.fetch("comments", JoinType.LEFT);
             }
 
             List<Predicate> predicates = new ArrayList<>();
 
-            if(findPostRequest.postStatuses()!=null ) {
+            if (findPostRequest.postStatuses() != null) {
                 predicates.add(root.get("status").in(findPostRequest.postStatuses()));
             }
 
-            if(findPostRequest.text()!=null) {
+            if (findPostRequest.text() != null) {
                 predicates.add(criteriaBuilder.like(root.get("text"), "%" + findPostRequest.text() + "%"));
             }
 
-            if(findPostRequest.publicationDate()!=null) {
+            if (findPostRequest.publicationDate() != null) {
                 Predicate publicationDateIsNullPred = criteriaBuilder.isNull(root.get("publicationDate"));
                 Predicate publicationDateLEPred = criteriaBuilder.lessThanOrEqualTo(root.get("publicationDate"), findPostRequest.publicationDate());
                 predicates.add(criteriaBuilder.or(publicationDateLEPred, publicationDateIsNullPred));
             }
 
-            if(findPostRequest.createdDateTimeMax()!=null && findPostRequest.createdDateTimeMin()!=null) {
+            if (findPostRequest.createdDateTimeMax() != null && findPostRequest.createdDateTimeMin() != null) {
                 predicates.add(criteriaBuilder.between(root.get("createdDateTime"),
                         findPostRequest.createdDateTimeMin(),
                         findPostRequest.createdDateTimeMax())
                 );
             }
 
-            return criteriaBuilder.and( predicates.toArray(new Predicate[0]));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
 
     private Specification<Post> preparePostSpecification(FindPostRequest findPostRequest) {
         Specification<Post> specification = Specification.where(null);
 
-        if(findPostRequest.postStatuses()!=null) {
+        if (findPostRequest.postStatuses() != null) {
             Specification<Post> statusInSpec = (root, query, criteriaBuilder) ->
                     root.get("status").in(findPostRequest.postStatuses());
             specification = specification.and(statusInSpec);
         }
 
-        if(findPostRequest.text()!=null) {
+        if (findPostRequest.text() != null) {
             Specification<Post> textLikeSpec = (root, query, criteriaBuilder) ->
                     criteriaBuilder.like(criteriaBuilder.lower(root.get("text")), "%" + findPostRequest.text().toLowerCase() + "%");
             specification = specification.and(textLikeSpec);
         }
 
-        if(findPostRequest.publicationDate()!=null) {
+        if (findPostRequest.publicationDate() != null) {
             Specification<Post> publicationDateSpec = (root, query, criteriaBuilder) ->
             {
                 Predicate publicationDateIsNullPred = criteriaBuilder.isNull(root.get("publicationDate"));
@@ -153,7 +168,7 @@ public class PostService {
             specification = specification.and(publicationDateSpec);
         }
 
-        if(findPostRequest.createdDateTimeMin()!=null && findPostRequest.createdDateTimeMax()!=null) {
+        if (findPostRequest.createdDateTimeMin() != null && findPostRequest.createdDateTimeMax() != null) {
             specification = specification.and((root, query, criteriaBuilder) ->
                     criteriaBuilder.between(root.get("createdDateTime"),
                             findPostRequest.createdDateTimeMin(),
@@ -164,8 +179,8 @@ public class PostService {
     }
 
     public Page<FindPostByGetMethodResponse> find(String textContaining,
-                     int page,
-                     int size) {
+                                                  int page,
+                                                  int size) {
 
         return postRepository.findActiveAndPublished(textContaining,
                         LocalDateTime.now(),
@@ -214,21 +229,21 @@ public class PostService {
         log(postRepository::find, "find");
 
 
-        log(()-> postRepository.findByStatusOrderByCreatedDateTimeDesc(PostStatus.DELETED), "findByStatusOrderByCreatedDateTimeDesc");
-        log(()-> postRepository.findOrderByCreateDateDescending(PostStatus.DELETED), "findOrderByCreateDateDescending");
+        log(() -> postRepository.findByStatusOrderByCreatedDateTimeDesc(PostStatus.DELETED), "findByStatusOrderByCreatedDateTimeDesc");
+        log(() -> postRepository.findOrderByCreateDateDescending(PostStatus.DELETED), "findOrderByCreateDateDescending");
 
-        log(()->postRepository.findByStatus(PostStatus.DELETED,
+        log(() -> postRepository.findByStatus(PostStatus.DELETED,
                         Sort.by(Sort.Order.desc("createdDateTime"), Sort.Order.desc("author"))
                 ), "findByStatus"
         );
 
-        log(()->postRepository.findAndSort(PostStatus.DELETED,
+        log(() -> postRepository.findAndSort(PostStatus.DELETED,
                         Sort.by(Sort.Order.desc("createdDateTime"), Sort.Order.desc("author"))
                 ), "findByStatus"
         );
 
-        log(()->postRepository.findByStatusInAndAuthorLike(Set.of(PostStatus.ACTIVE), "Marek Koszałka"), "findByStatusInAndAuthorLike");
-        log(()->postRepository.find(Set.of(PostStatus.ACTIVE, PostStatus.DELETED), "Koszałka"), "find");
+        log(() -> postRepository.findByStatusInAndAuthorLike(Set.of(PostStatus.ACTIVE), "Marek Koszałka"), "findByStatusInAndAuthorLike");
+        log(() -> postRepository.find(Set.of(PostStatus.ACTIVE, PostStatus.DELETED), "Koszałka"), "find");
 
         System.out.println("=================================================================================");
         System.out.println("find");
@@ -249,23 +264,23 @@ public class PostService {
         /*System.out.println("find po statusie");
         System.out.println(postRepository.find(PostStatus.ACTIVE));*/
 
-        log(()->postRepository.findByStatus(PostStatus.ACTIVE, PageRequest.of(0, 2, Sort.by(Sort.Order.desc("id")))) ,"findByStatus");
-        log(()->postRepository.findByStatus(PostStatus.ACTIVE, PageRequest.of(1, 2, Sort.by(Sort.Order.desc("id")))) ,"findByStatus");
-        log(()->postRepository.findByStatus(PostStatus.ACTIVE, PageRequest.of(2, 2, Sort.by(Sort.Order.desc("id")))) ,"findByStatus");
-        log(()->postRepository.findByStatus(PostStatus.ACTIVE, PageRequest.of(3, 2, Sort.by(Sort.Order.desc("id")))) ,"findByStatus");
+        log(() -> postRepository.findByStatus(PostStatus.ACTIVE, PageRequest.of(0, 2, Sort.by(Sort.Order.desc("id")))), "findByStatus");
+        log(() -> postRepository.findByStatus(PostStatus.ACTIVE, PageRequest.of(1, 2, Sort.by(Sort.Order.desc("id")))), "findByStatus");
+        log(() -> postRepository.findByStatus(PostStatus.ACTIVE, PageRequest.of(2, 2, Sort.by(Sort.Order.desc("id")))), "findByStatus");
+        log(() -> postRepository.findByStatus(PostStatus.ACTIVE, PageRequest.of(3, 2, Sort.by(Sort.Order.desc("id")))), "findByStatus");
 
-        LogUtil.logPage(()->postRepository.findAllByStatus(PostStatus.ACTIVE, PageRequest.of(0, 2, Sort.by(Sort.Order.desc("id")))) ,"findAllByStatus 0");
-        LogUtil.logPage(()->postRepository.findAllByStatus(PostStatus.ACTIVE, PageRequest.of(1, 2, Sort.by(Sort.Order.desc("id")))) ,"findAllByStatus 1");
-        LogUtil.logPage(()->postRepository.findAllByStatus(PostStatus.ACTIVE, PageRequest.of(2, 2, Sort.by(Sort.Order.desc("id")))) ,"findAllByStatus 2");
-        LogUtil.logPage(()->postRepository.findAllByStatus(PostStatus.ACTIVE, PageRequest.of(3, 2, Sort.by(Sort.Order.desc("id")))) ,"findAllByStatus 3");
+        LogUtil.logPage(() -> postRepository.findAllByStatus(PostStatus.ACTIVE, PageRequest.of(0, 2, Sort.by(Sort.Order.desc("id")))), "findAllByStatus 0");
+        LogUtil.logPage(() -> postRepository.findAllByStatus(PostStatus.ACTIVE, PageRequest.of(1, 2, Sort.by(Sort.Order.desc("id")))), "findAllByStatus 1");
+        LogUtil.logPage(() -> postRepository.findAllByStatus(PostStatus.ACTIVE, PageRequest.of(2, 2, Sort.by(Sort.Order.desc("id")))), "findAllByStatus 2");
+        LogUtil.logPage(() -> postRepository.findAllByStatus(PostStatus.ACTIVE, PageRequest.of(3, 2, Sort.by(Sort.Order.desc("id")))), "findAllByStatus 3");
     }
 
-    private void log(List<Post> posts, String methodName){
-        System.out.println("-------------------- "+ methodName +" ----------------------");
+    private void log(List<Post> posts, String methodName) {
+        System.out.println("-------------------- " + methodName + " ----------------------");
         posts.forEach(System.out::println);
     }
 
-    private void log(Supplier<List<Post>> listSupplier, String methodName){
+    private void log(Supplier<List<Post>> listSupplier, String methodName) {
         System.out.println("---------------" + methodName + " ---------------------");
 
         listSupplier.get().forEach(System.out::println);
