@@ -11,6 +11,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pl.twojekursy.post.Post;
+import pl.twojekursy.user.User;
 
 import java.time.LocalDateTime;
 
@@ -19,8 +20,8 @@ import java.time.LocalDateTime;
 @Audited
 @Data
 @NoArgsConstructor
-@ToString(exclude = {"post"})
-@EqualsAndHashCode(exclude = {"post"})
+@ToString(exclude = {"post", "user"})
+@EqualsAndHashCode(exclude = {"post", "user"})
 @Builder(toBuilder = true)
 @AllArgsConstructor
 public class Comment {
@@ -49,4 +50,7 @@ public class Comment {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Post post;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private User user;
 }

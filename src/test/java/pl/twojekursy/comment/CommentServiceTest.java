@@ -4,18 +4,21 @@ import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import pl.twojekursy.BaseUnitTest;
-import pl.twojekursy.post.Post;
-import pl.twojekursy.post.PostScope;
-import pl.twojekursy.post.PostService;
-import pl.twojekursy.post.PostStatus;
+import pl.twojekursy.post.*;
+import pl.twojekursy.security.LoggedUserProvider;
+import pl.twojekursy.user.User;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static pl.twojekursy.comment.ReadCommentResponse.PostResponse;
 
@@ -28,6 +31,50 @@ class CommentServiceTest extends BaseUnitTest {
 
     @Mock
     private PostService postService;
+
+    @Mock
+    private LoggedUserProvider loggedUserProvider;
+
+    @Captor
+    private ArgumentCaptor<Comment> commentCaptor;
+
+    @Test
+    void givenCorrectRequest_whenCreate_thenCreateComment() {
+        // given
+        CreateCommentRequest request = new CreateCommentRequest(
+                "text",
+                13223L
+        );
+
+        String login = "loginek";
+        User user = User.builder()
+                .id(23L)
+                .login(login)
+                .build();
+
+        Post post = Post.builder()
+                .id(2346L)
+                .build();
+
+        when(loggedUserProvider.provideLoggedUser()).thenReturn(user);
+        when(postService.findPostById(request.getPostId())).thenReturn(post);
+
+        // when
+        underTest.create(request);
+
+        // then
+        verify(commentRepository).save(commentCaptor.capture());
+
+        Comment comment = commentCaptor.getValue();
+        assertThat(comment).isNotNull();
+        assertThat(comment.getId()).isNull();
+        assertThat(comment.getCreatedDateTime()).isNull();
+        assertThat(comment.getLastModifiedDateTime()).isNull();
+        assertThat(comment.getText()).isEqualTo(request.getText());
+        assertThat(comment.getAuthor()).isEqualTo(login);
+        assertThat(comment.getUser()).isEqualTo(user);
+        assertThat(comment.getPost()).isEqualTo(post);
+    }
 
     @Test
     void givenCommentIdNotExist_whenFindById_thenEntityNotFoundException() {

@@ -12,10 +12,6 @@ public class CreateCommentRequest {
     @Size(max = 5000)
     String text;
 
-    @NotBlank
-    @Size(max = 100)
-    String author;
-
     @NotNull
     Long postId;
 }

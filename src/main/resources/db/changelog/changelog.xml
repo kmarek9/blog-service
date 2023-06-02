@@ -647,4 +647,31 @@
         <addNotNullConstraint columnName="user_id" tableName="post" columnDataType="BIGINT" />
     </changeSet>
 
+    <changeSet author="marekk" id="BS-4004-1">
+        <addColumn tableName="comment">
+            <column defaultValueComputed="NULL" name="user_id" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="marekk" id="BS-4004-2">
+        <addColumn tableName="comment_aud">
+            <column defaultValueComputed="NULL" name="user_id" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="marekk" id="BS-4004-3">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="comment" constraintName="FK_COMMENT_USER" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="user_info" validate="true"/>
+    </changeSet>
+
+    <changeSet author="marekk" id="BS-4004-4" >
+        <update tableName="comment">
+            <column name="user_id" valueComputed="(select u.id from user_info u where u.login='anonymous')"/>
+        </update>
+    </changeSet>
+
+    <changeSet author="marekk"  id="BS-4004-5">
+        <addNotNullConstraint columnName="user_id" tableName="comment" columnDataType="BIGINT" />
+    </changeSet>
+
+
 </databaseChangeLog>

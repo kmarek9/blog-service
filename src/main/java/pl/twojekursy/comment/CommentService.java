@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.twojekursy.post.Post;
 import pl.twojekursy.post.PostService;
+import pl.twojekursy.security.LoggedUserProvider;
+import pl.twojekursy.user.User;
 import pl.twojekursy.util.SpecificationUtil;
 
 import java.util.Optional;
@@ -22,14 +24,19 @@ public class CommentService {
 
     private final PostService postService;
 
+    private final LoggedUserProvider loggedUserProvider;
+
     @Transactional
     public void create(CreateCommentRequest createCommentRequest){
+        User user = loggedUserProvider.provideLoggedUser();
+
         Post post = postService.findPostById(createCommentRequest.getPostId());
 
         Comment comment = Comment.builder()
                 .text(createCommentRequest.getText())
-                .author(createCommentRequest.getAuthor())
+                .author(user.getLogin())
                 .post(post)
+                .user(user)
                 .build();
 
         commentRepository.save(comment);
