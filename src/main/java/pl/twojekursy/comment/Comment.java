@@ -53,4 +53,8 @@ public class Comment {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
+
+    public boolean isAuthor(Long userId){
+        return user.getId().equals(userId);
+    }
 }

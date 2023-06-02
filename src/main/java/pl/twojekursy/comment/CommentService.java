@@ -26,6 +26,8 @@ public class CommentService {
 
     private final LoggedUserProvider loggedUserProvider;
 
+    private final CommentAuthorizationChecker commentAuthorizationChecker;
+
     @Transactional
     public void create(CreateCommentRequest createCommentRequest){
         User user = loggedUserProvider.provideLoggedUser();
@@ -56,8 +58,11 @@ public class CommentService {
 
     @Transactional
     public void update(Long id, UpdateCommentRequest updateCommentRequest) {
+        User user = loggedUserProvider.provideLoggedUser();
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
+
+        commentAuthorizationChecker.checkPermissions(user, comment);
 
         Comment newComment = comment.toBuilder()
                 .author(updateCommentRequest.getAuthor())
