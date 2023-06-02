@@ -28,7 +28,9 @@ import java.util.Set;
 @EqualsAndHashCode(exclude = {"groupsInfo", "address"})
 @Builder(toBuilder = true)
 @AllArgsConstructor
-@Table(name = "user_info")
+@Table(name = "user_info"/*,
+        uniqueConstraints=
+            @UniqueConstraint(columnNames={"login"})*/)
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

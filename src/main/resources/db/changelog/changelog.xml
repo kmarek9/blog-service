@@ -609,4 +609,42 @@
         <addNotNullConstraint columnName="role" tableName="user_info" columnDataType="VARCHAR(255)" />
     </changeSet>
 
+
+    <changeSet author="marekk" id="BS-4002-1">
+        <addColumn tableName="post">
+            <column defaultValueComputed="NULL" name="user_id" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="marekk" id="BS-4002-2">
+        <addColumn tableName="post_aud">
+            <column defaultValueComputed="NULL" name="user_id" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="marekk" id="BS-4002-3">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="post" constraintName="FKqiq7jdf8sa6hq1d8sr0k6s12q" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="user_info" validate="true"/>
+    </changeSet>
+
+    <changeSet author="marekk" id="BS-4002-4">
+        <insert tableName="user_info">
+            <column  name="version"  value="0"/>
+            <column  name="created_date_time" valueDate="2023-01-01T10:00:00"/>
+            <column  name="last_modified_date_time" valueDate="2023-01-01T10:00:00"/>
+            <column  name="login"  value="anonymous"/>
+            <column  name="password"  value="$2a$10$XuRRiiW7iS31.UJWcMkp8u2h8rXqHIc7/M17901c9ohlazuniBiMK"/>
+            <column  name="role"  value="USER"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="marekk" id="BS-4002-5" >
+        <update tableName="post">
+            <column name="user_id" valueComputed="(select u.id from user_info u where u.login='anonymous')"/>
+        </update>
+    </changeSet>
+
+    <changeSet author="marekk"  id="BS-4002-6">
+        <addNotNullConstraint columnName="user_id" tableName="post" columnDataType="BIGINT" />
+    </changeSet>
+
 </databaseChangeLog>

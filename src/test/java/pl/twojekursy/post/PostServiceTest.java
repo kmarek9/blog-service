@@ -1,13 +1,19 @@
 package pl.twojekursy.post;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import pl.twojekursy.BaseUnitTest;
+import pl.twojekursy.security.LoggedUserProvider;
+import pl.twojekursy.user.User;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
 
@@ -20,6 +26,53 @@ class PostServiceTest extends BaseUnitTest {
 
     @Mock
     private PostRepository postRepository;
+
+    @Mock
+    private LoggedUserProvider loggedUserProvider;
+
+    @Captor
+    private ArgumentCaptor<Post> postCaptor;
+
+    @Test
+    void givenCorrectRequest_whenCreate_thenCreatePost() {
+        // given
+        String text = "text";
+        PostScope scope = PostScope.PUBLIC;
+        LocalDateTime publicationDate = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.SECONDS);
+
+        CreatePostRequest request = new CreatePostRequest(
+                text,
+                scope,
+                publicationDate
+        );
+
+        String login = "loginek";
+        User user = User.builder()
+                .id(23L)
+                .login(login)
+                .build();
+        when(loggedUserProvider.provideLoggedUser()).thenReturn(user);
+
+        // when
+        underTest.create(request);
+
+        // then
+        verify(postRepository).save(postCaptor.capture());
+
+        Post post = postCaptor.getValue();
+        assertThat(post).isNotNull();
+        assertThat(post.getId()).isNull();
+        assertThat(post.getVersion()).isNull();
+        assertThat(post.getCreatedDateTime()).isNull();
+        assertThat(post.getLastModifiedDateTime()).isNull();
+        assertThat(post.getText()).isEqualTo(text);
+        assertThat(post.getPublicationDate()).isEqualToIgnoringNanos(publicationDate);
+        assertThat(post.getScope()).isEqualTo(scope);
+        assertThat(post.getStatus()).isEqualTo(PostStatus.ACTIVE);
+        assertThat(post.getAuthor()).isEqualTo(login);
+        assertThat(post.getUser()).isEqualTo(user);
+
+    }
 
     @Test
     void givenNoResults_whenFindAll_thenReturnEmptyPage() {

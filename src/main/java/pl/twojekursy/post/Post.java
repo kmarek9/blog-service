@@ -14,6 +14,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pl.twojekursy.comment.Comment;
+import pl.twojekursy.user.User;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -66,6 +67,9 @@ public class Post {
     @OneToMany(mappedBy = "post")
     private Set<Comment> comments;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private User user;
+
     public Post(Post old){
         this.id = old.id;
         this.version = old.version;
@@ -78,12 +82,13 @@ public class Post {
         this.status = old.status;
     }
 
-    public Post(String text, PostScope scope, String author, LocalDateTime publicationDate) {
+    public Post(String text, PostScope scope, String author, LocalDateTime publicationDate, User user) {
         this.text = text;
         this.scope = scope;
         this.author = author;
         this.publicationDate = publicationDate;
         this.status = PostStatus.ACTIVE;
+        this.user = user;
     }
 
     public void setId(Long id) {
@@ -164,6 +169,14 @@ public class Post {
 
     public void setComments(Set<Comment> comments) {
         this.comments = comments;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override

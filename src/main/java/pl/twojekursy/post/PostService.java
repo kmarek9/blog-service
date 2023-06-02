@@ -10,6 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.twojekursy.security.LoggedUserProvider;
+import pl.twojekursy.user.User;
 import pl.twojekursy.util.LogUtil;
 import pl.twojekursy.util.SpecificationUtil;
 
@@ -25,17 +27,23 @@ public class PostService {
 
     private final PostRepository postRepository;
 
-    public PostService(PostRepository postRepository) {
+    private final LoggedUserProvider loggedUserProvider;
+
+    public PostService(PostRepository postRepository, LoggedUserProvider loggedUserProvider) {
         this.postRepository = postRepository;
+        this.loggedUserProvider = loggedUserProvider;
     }
 
     @Transactional
     public void create(CreatePostRequest postRequest){
+        User user = loggedUserProvider.provideLoggedUser();
+
         Post post = new Post(
                 postRequest.getText(),
                 postRequest.getScope(),
-                postRequest.getAuthor(),
-                postRequest.getPublicationDate()
+                user.getLogin(),
+                postRequest.getPublicationDate(),
+                user
         );
 
         postRepository.save(post);

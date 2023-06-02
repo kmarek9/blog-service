@@ -16,17 +16,12 @@ public class CreatePostRequest {
     @NotNull
     private final PostScope scope;
 
-    @NotBlank
-    @Size(max = 100)
-    private final String author;
-
     @FutureOrPresent
     private final LocalDateTime publicationDate;
 
-    public CreatePostRequest(String text, PostScope scope, String author, LocalDateTime publicationDate) {
+    public CreatePostRequest(String text, PostScope scope, LocalDateTime publicationDate) {
         this.text = text;
         this.scope = scope;
-        this.author = author;
         this.publicationDate = publicationDate;
     }
 
@@ -36,10 +31,6 @@ public class CreatePostRequest {
 
     public PostScope getScope() {
         return scope;
-    }
-
-    public String getAuthor() {
-        return author;
     }
 
     public LocalDateTime getPublicationDate() {

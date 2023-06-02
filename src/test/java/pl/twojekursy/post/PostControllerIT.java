@@ -30,14 +30,13 @@ class PostControllerIT extends BaseIT {
     @Test
     void givenWrongRequest_whenCreate_thenBadRequest() throws Exception {
         // given
-        CreatePostRequest request = new CreatePostRequest(null, null, null, null);
+        CreatePostRequest request = new CreatePostRequest(null, null, null);
         // when
         ResultActions resultActions = performPost(API_POSTS_URL_PREFIX, request);
 
         // then
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.*", hasSize(3)))
-                .andExpect(jsonPath("$.author").value("must not be blank"))
                 .andExpect(jsonPath("$.text").value("must not be blank"))
                 .andExpect(jsonPath("$.scope").value("must not be null"));
     }
@@ -53,7 +52,6 @@ class PostControllerIT extends BaseIT {
         CreatePostRequest request = new CreatePostRequest(
                 text,
                 scope,
-                author,
                 publicationDate
         );
 
