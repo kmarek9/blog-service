@@ -8,10 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import pl.twojekursy.test.helper.UserCreator;
+import pl.twojekursy.user.User;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -34,9 +38,13 @@ public class BaseIT {
     @Autowired
     private DBCleaner dbCleaner;
 
+    @Autowired
+    protected UserCreator userCreator;
+
     @BeforeEach
     void setUp() {
         dbCleaner.clean();
+        //userCreator.createUser();
     }
 
     protected ResultActions performPost(String url, Object request) throws Exception {
@@ -68,6 +76,24 @@ public class BaseIT {
 
     protected LocalDateTime parseDateTime(String json, String jsonPath) {
         return LocalDateTime.parse(JsonPath.compile(jsonPath).read(json)
+        );
+    }
+
+    protected User createUserAndAuthenticate() {
+        User user = userCreator.createUser();
+        createSecurityContext(user);
+        return user;
+    }
+
+    protected User createAdminAndAuthenticate() {
+        User user = userCreator.createAdmin();
+        createSecurityContext(user);
+        return user;
+    }
+
+    private static void createSecurityContext(User user) {
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities())
         );
     }
 }

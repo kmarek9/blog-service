@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import pl.twojekursy.BaseServiceIT;
 import pl.twojekursy.test.helper.PostCreator;
+import pl.twojekursy.test.helper.UserCreator;
+import pl.twojekursy.user.User;
 
 import java.time.LocalDateTime;
 
@@ -25,23 +27,25 @@ class PostServiceIT extends BaseServiceIT {
         int size = 3;
 
         // PLEASE DO NOT CHANGE ORDER OF CREATED POSTS
-        Post publishedAndActive1 = postCreator.createPost();
-        Post publishedAndActive2 = postCreator.createPost(post -> post.setPublicationDate(LocalDateTime.now().plusSeconds(1)));
+        User user = userCreator.createUser();
+
+        Post publishedAndActive1 = postCreator.createPost(user);
+        Post publishedAndActive2 = postCreator.createPost(user, post -> post.setPublicationDate(LocalDateTime.now().plusSeconds(1)));
 
         //not matching by text
-        postCreator.createPost(post -> post.setText("nie pasuje"));
+        postCreator.createPost(user, post -> post.setText("nie pasuje"));
 
-        Post publishedAndActive3 = postCreator.createPost();
+        Post publishedAndActive3 = postCreator.createPost(user);
 
         // not matching - deleted
-        postCreator.createPost(post -> post.setStatus(PostStatus.DELETED));
+        postCreator.createPost(user, post -> post.setStatus(PostStatus.DELETED));
 
-        Post publishedAndActive4 = postCreator.createPost();
+        Post publishedAndActive4 = postCreator.createPost(user);
 
         //not matching - not published
-        Post notPublished = postCreator.createPost(post -> post.setPublicationDate(LocalDateTime.now().plusDays(1)));
+        Post notPublished = postCreator.createPost(user, post -> post.setPublicationDate(LocalDateTime.now().plusDays(1)));
 
-        Post publishedAndActive5 = postCreator.createPost();
+        Post publishedAndActive5 = postCreator.createPost(user);
 
         Thread.sleep(1100);
 

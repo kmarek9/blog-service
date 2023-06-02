@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.twojekursy.post.Post;
 import pl.twojekursy.post.PostScope;
 import pl.twojekursy.post.PostStatus;
+import pl.twojekursy.user.User;
 
 import java.util.function.Consumer;
 
@@ -20,21 +21,22 @@ public class PostCreator {
 
 
     @Transactional
-    public Post createPost() {
+    public Post createPost(User user) {
         Post post = Post.builder()
                 .author("author")
                 .text("text")
                 .scope(PostScope.PUBLIC)
                 .publicationDate(null)
                 .status(PostStatus.ACTIVE)
+                .user(user)
                 .build();
         entityManager.persist(post);
         return post;
     }
 
     @Transactional
-    public Post createPost(Consumer<Post> modifier) {
-        Post post = createPost();
+    public Post createPost(User user, Consumer<Post> modifier) {
+        Post post = createPost(user);
 
         modifier.accept(post);
         entityManager.persist(post);
@@ -42,16 +44,16 @@ public class PostCreator {
     }
 
     @Transactional
-    public Post createPostWithOneComment() {
-        Post post = createPost();
+    public Post createPostWithOneComment(User user) {
+        Post post = createPost(user);
         commentCreator.createComment(post);
 
         return post;
     }
 
     @Transactional
-    public Post createPostWithComments(int commentsNumber) {
-        Post post = createPost();
+    public Post createPostWithComments(User user, int commentsNumber) {
+        Post post = createPost(user);
         for (int i = 0; i < commentsNumber; i++) {
             commentCreator.createComment(post, i);
         }

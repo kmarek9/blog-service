@@ -2,6 +2,7 @@ package pl.twojekursy.invoice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.ResultActions;
 import pl.twojekursy.BaseIT;
 import pl.twojekursy.invoice.detail.InvoiceDetail;

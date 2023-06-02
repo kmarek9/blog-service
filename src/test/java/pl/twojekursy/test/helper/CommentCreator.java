@@ -18,6 +18,7 @@ public class CommentCreator {
                 .author("author")
                 .text("text")
                 .post(post)
+                .user(post.getUser())
                 .build();
         entityManager.persist(comment);
         return comment;
@@ -29,6 +30,7 @@ public class CommentCreator {
                 .author("author")
                 .text("text"+number)
                 .post(post)
+                .user(post.getUser())
                 .build();
         entityManager.persist(comment);
         return comment;

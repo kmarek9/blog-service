@@ -7,6 +7,8 @@ import pl.twojekursy.BaseIT;
 import pl.twojekursy.comment.Comment;
 import pl.twojekursy.test.helper.CommentCreator;
 import pl.twojekursy.test.helper.PostCreator;
+import pl.twojekursy.user.User;
+import pl.twojekursy.user.UserRole;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -26,27 +28,42 @@ class PostControllerIT extends BaseIT {
     @Autowired
     private CommentCreator commentCreator;
 
+    @Test
+    void givenNotAuthenticatedUser_whenCreate_then401() throws Exception {
+        // given
+        //createUserAndAuthenticate();
+        CreatePostRequest request = new CreatePostRequest(null, null, null);
+        // when
+        ResultActions resultActions = performPost(API_POSTS_URL_PREFIX, request);
+
+        // then
+        resultActions.andExpect(status().isUnauthorized());
+    }
 
     @Test
     void givenWrongRequest_whenCreate_thenBadRequest() throws Exception {
         // given
+        createUserAndAuthenticate();
         CreatePostRequest request = new CreatePostRequest(null, null, null);
         // when
         ResultActions resultActions = performPost(API_POSTS_URL_PREFIX, request);
 
         // then
         resultActions.andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.*", hasSize(3)))
+                .andExpect(jsonPath("$.*", hasSize(2)))
                 .andExpect(jsonPath("$.text").value("must not be blank"))
                 .andExpect(jsonPath("$.scope").value("must not be null"));
     }
 
     @Test
+   // @WithUserDetails(value = "michal2", userDetailsServiceBeanName = "userService",
+   //         setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void givenCorrectRequest_whenCreate_thenCreatePost() throws Exception {
+        User user = createUserAndAuthenticate();
+
         // given
         String text = "text";
         PostScope scope = PostScope.PUBLIC;
-        String author = "author";
         LocalDateTime publicationDate = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.SECONDS);
 
         CreatePostRequest request = new CreatePostRequest(
@@ -82,18 +99,20 @@ class PostControllerIT extends BaseIT {
                 ).containsExactly(
                         0,
                         text,
-                        author,
+                        user.getLogin(),
                         publicationDate,
                         scope,
                         PostStatus.ACTIVE
                 );
 
+        assertThat(post.getUser().getId()).isEqualTo(user.getId());
         assertThat(post.getComments()).isEmpty();
     }
 
     @Test
     void givenWrongRequest_whenUpdate_thenBadRequest() throws Exception {
         // given
+        createUserAndAuthenticate();
         UpdatePostRequest request = new UpdatePostRequest(null, null, null);
         Long id = 1000L;
 
@@ -109,8 +128,22 @@ class PostControllerIT extends BaseIT {
     }
 
     @Test
+    void givenNotAuthenticated_whenUpdate_then401() throws Exception {
+        // given
+        UpdatePostRequest request = new UpdatePostRequest(null, null, null);
+        Long id = 1000L;
+
+        // when
+        ResultActions resultActions = performPut(API_POSTS_URL_PREFIX + "/{id}", id, request);
+
+        // then
+        resultActions.andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void givenNotExistingPost_whenUpdate_thenNotFound() throws Exception {
         // given
+        createUserAndAuthenticate();
         UpdatePostRequest request = new UpdatePostRequest(0, "text", PostScope.PUBLIC);
         Long id = 1000L;
 
@@ -126,7 +159,8 @@ class PostControllerIT extends BaseIT {
     @Test
     void givenCorrectRequest_whenUpdate_thenUpdatePost() throws Exception {
         // given
-        Post post = postCreator.createPostWithOneComment();
+        User user = createUserAndAuthenticate();
+        Post post = postCreator.createPostWithOneComment(user);
 
         String newText = "newText";
         PostScope newScope = PostScope.PRIVATE;
@@ -170,9 +204,51 @@ class PostControllerIT extends BaseIT {
     }
 
     @Test
+    void givenAuthenticatedUserNotAuthor_whenUpdate_then403() throws Exception {
+        // given
+        createUserAndAuthenticate();
+        User author = userCreator.createUser("dffdggdfg", UserRole.USER);
+        Post post = postCreator.createPostWithOneComment(author);
+
+        String newText = "newText";
+        PostScope newScope = PostScope.PRIVATE;
+        UpdatePostRequest request = new UpdatePostRequest(post.getVersion(), newText, newScope);
+        Long id = post.getId();
+
+        // when
+        ResultActions resultActions = performPut(API_POSTS_URL_PREFIX + "/{id}", id, request);
+
+        // then
+        resultActions.andExpect(status().isForbidden());
+
+        Post shouldntBeUpdatedPost = entityManager.find(Post.class, id);
+
+        assertThat(shouldntBeUpdatedPost.getLastModifiedDateTime()).isEqualToIgnoringNanos(post.getCreatedDateTime());
+        assertThat(shouldntBeUpdatedPost.getCreatedDateTime()).isEqualToIgnoringNanos(post.getCreatedDateTime());
+
+        assertThat(shouldntBeUpdatedPost)
+                .extracting(
+                        Post::getVersion,
+                        Post::getText,
+                        Post::getAuthor,
+                        Post::getPublicationDate,
+                        Post::getScope,
+                        Post::getStatus
+                ).containsExactly(
+                        post.getVersion(),
+                        post.getText(),
+                        post.getAuthor(),
+                        post.getPublicationDate(),
+                        post.getScope(),
+                        post.getStatus()
+                );
+    }
+
+    @Test
     void givenWrongVersion_whenUpdate_thenConflict() throws Exception {
         // given
-        Post post = postCreator.createPost();
+        User user = createUserAndAuthenticate();
+        Post post = postCreator.createPost(user);
         int wrongVersion = post.getVersion() + 1;
 
         UpdatePostRequest request = new UpdatePostRequest(wrongVersion, "newText", PostScope.PRIVATE);
@@ -226,7 +302,8 @@ class PostControllerIT extends BaseIT {
     @Test
     void givenExistingPost_whenRead_thenReturnResponse() throws Exception {
         // given
-        Post post = postCreator.createPost();
+        User user = userCreator.createUser();
+        Post post = postCreator.createPost(user);
         Long postId = post.getId();
         Comment comment1 = commentCreator.createComment(post, 1);
         Comment comment2 = commentCreator.createComment(post, 2);
@@ -290,23 +367,24 @@ class PostControllerIT extends BaseIT {
         // given
 
         // PLEASE DO NOT CHANGE ORDER OF CREATED POSTS
-        Post publishedAndActive1 = postCreator.createPost();
-        Post publishedAndActive2 = postCreator.createPost(post -> post.setPublicationDate(null));
+        User user = userCreator.createUser();
+        Post publishedAndActive1 = postCreator.createPost(user);
+        Post publishedAndActive2 = postCreator.createPost(user, post -> post.setPublicationDate(null));
 
         //not matching by text
-        postCreator.createPost(post -> post.setText("nie pasuje"));
+        postCreator.createPost(user, post -> post.setText("nie pasuje"));
 
-        Post publishedAndActive3 = postCreator.createPost();
+        Post publishedAndActive3 = postCreator.createPost(user);
 
         // not matching - deleted
-        postCreator.createPost(post -> post.setStatus(PostStatus.DELETED));
+        postCreator.createPost(user, post -> post.setStatus(PostStatus.DELETED));
 
-        Post publishedAndActive4 = postCreator.createPost();
+        Post publishedAndActive4 = postCreator.createPost(user);
 
         //not matching - not published
-        Post notPublished = postCreator.createPost(post -> post.setPublicationDate(LocalDateTime.now().plusDays(1)));
+        Post notPublished = postCreator.createPost(user, post -> post.setPublicationDate(LocalDateTime.now().plusDays(1)));
 
-        Post publishedAndActive5 = postCreator.createPost();
+        Post publishedAndActive5 = postCreator.createPost(user);
 
         Thread.sleep(1100);
         // when
