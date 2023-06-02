@@ -66,4 +66,12 @@ public class PostController {
         Page<FindPostResponse> body = postService.find(findPostRequest, pageable);
         return ResponseEntity.ok(body);
     }
+
+    //usluga POST /api/post/findForLogged która robi to samo co /api/post/find, ale zaweza wyniki do postow ktorych autorem jest
+    //zalogowana osoba
+    @PostMapping("/findForLogged")
+    public ResponseEntity<Page<FindPostResponse>> findForLoggedUser(@RequestBody FindPostRequest findPostRequest, Pageable pageable){
+        Page<FindPostResponse> body = postService.findForLogged(findPostRequest, pageable);
+        return ResponseEntity.ok(body);
+    }
 }

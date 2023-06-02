@@ -109,6 +109,20 @@ public class PostService {
                 .map(FindPostResponse::from);
     }
 
+    public Page<FindPostResponse> findForLogged(FindPostRequest findPostRequest, Pageable pageable) {
+        Long userId = loggedUserProvider.provideLoggedUser().getId();
+
+        Specification<Post> specification = preparePostSpecificationUsingPredicates(findPostRequest);
+
+        Specification<Post> userIdEqual = (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("user").get("id"), userId);
+
+        Specification<Post> postSpecification = specification.and(userIdEqual);
+
+        return postRepository.findAll(postSpecification, pageable)
+                .map(FindPostResponse::from);
+    }
+
     private Specification<Post> preparePostSpecificationUsingPredicates(FindPostRequest findPostRequest) {
         return (root, query, criteriaBuilder) ->
         {
