@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import pl.twojekursy.BaseIT;
 import pl.twojekursy.BaseServiceIT;
 import pl.twojekursy.test.helper.PostCreator;
 import pl.twojekursy.user.User;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class PostRepositoryIT extends BaseServiceIT {
+class PostRepositoryIT extends BaseIT {
     @Autowired
     private PostRepository underTest;
 

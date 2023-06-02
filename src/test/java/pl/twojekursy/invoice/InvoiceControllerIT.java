@@ -22,8 +22,23 @@ class InvoiceControllerIT extends BaseIT {
     private InvoiceCreator invoiceCreator;
 
     @Test
+    void givenNotAuthenticated_whenCreate_then401() throws Exception {
+        // given
+        CreateInvoiceRequest request = new CreateInvoiceRequest(
+                null, null, null
+        );
+
+        // when
+        ResultActions resultActions = performPost(API_INVOICES_PREFIX_URL, request);
+
+        // then
+        resultActions.andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void givenWrongRequest_whenCreate_thenBadRequest() throws Exception {
         // given
+        createAdminAndAuthenticate();
         CreateInvoiceRequest request = new CreateInvoiceRequest(
                 null, null, null
         );
@@ -42,6 +57,7 @@ class InvoiceControllerIT extends BaseIT {
     @Test
     void givenCorrectRequest_whenCreate_thenCreateInvoice() throws Exception {
         // given
+        createAdminAndAuthenticate();
         LocalDate paymentDate = LocalDate.now().plusDays(1);
         String buyer = "buyer";
         String seller = "seller";
@@ -89,10 +105,23 @@ class InvoiceControllerIT extends BaseIT {
                 .containsExactlyInAnyOrder("product1", "product2");
     }
 
+    @Test
+    void givenNotAuthenticated_whenUpdate_then401() throws Exception {
+        // given
+        UpdateInvoiceRequest request = new UpdateInvoiceRequest(null, null, null, null);
+        Long id = 1000L;
+
+        // when
+        ResultActions resultActions = performPut(API_INVOICES_PREFIX_URL + "/{id}", id, request);
+
+        // then
+        resultActions.andExpect(status().isUnauthorized());
+    }
 
     @Test
     void givenWrongRequest_whenUpdate_thenBadRequest() throws Exception {
         // given
+        createUserAndAuthenticate();
         UpdateInvoiceRequest request = new UpdateInvoiceRequest(null, null, null, null);
         Long id = 1000L;
 
@@ -111,6 +140,7 @@ class InvoiceControllerIT extends BaseIT {
     @Test
     void givenNotExistingInvoice_whenUpdate_thenNotFound() throws Exception {
         // given
+        createUserAndAuthenticate();
         UpdateInvoiceRequest request = new UpdateInvoiceRequest(0, LocalDate.now(), "buyer", "seller");
         Long id = 1000L;
 
@@ -126,6 +156,7 @@ class InvoiceControllerIT extends BaseIT {
     @Test
     void givenCorrectRequest_whenUpdate_thenUpdateInvoice() throws Exception {
         // given
+        createUserAndAuthenticate();
         Invoice invoice = invoiceCreator.createInvoiceWithOneInvoiceDetail();
         Long id = invoice.getId();
 
@@ -174,6 +205,7 @@ class InvoiceControllerIT extends BaseIT {
     @Test
     void givenWrongVersion_whenUpdate_thenConflict() throws Exception {
         // given
+        createUserAndAuthenticate();
         Invoice invoice = invoiceCreator.createInvoiceWithOneInvoiceDetail();
         Long id = invoice.getId();
         int wrongVersion = invoice.getVersion() + 1;
@@ -210,8 +242,21 @@ class InvoiceControllerIT extends BaseIT {
     }
 
     @Test
+    void givenNotAuthenticated_whenRead_then401() throws Exception {
+        // given
+        Long id = 1000L;
+
+        // when
+        ResultActions resultActions = performGet(API_INVOICES_PREFIX_URL + "/{id}", id);
+
+        // then
+        resultActions.andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void givenNotExistingInvoice_whenRead_thenNotFound() throws Exception {
         // given
+        createUserAndAuthenticate();
         Long id = 1000L;
 
         // when
@@ -226,6 +271,7 @@ class InvoiceControllerIT extends BaseIT {
     @Test
     void givenExistingInvoice_whenRead_thenReturnResponse() throws Exception {
         // given
+        createUserAndAuthenticate();
         Invoice invoice = invoiceCreator.createInvoiceWithOneInvoiceDetail();
         Long invoiceId = invoice.getId();
 

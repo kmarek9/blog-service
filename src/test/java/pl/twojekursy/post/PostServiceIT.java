@@ -3,6 +3,7 @@ package pl.twojekursy.post;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import pl.twojekursy.BaseIT;
 import pl.twojekursy.BaseServiceIT;
 import pl.twojekursy.test.helper.PostCreator;
 import pl.twojekursy.test.helper.UserCreator;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class PostServiceIT extends BaseServiceIT {
+class PostServiceIT extends BaseIT {
     @Autowired
     private PostService underTest;
 
