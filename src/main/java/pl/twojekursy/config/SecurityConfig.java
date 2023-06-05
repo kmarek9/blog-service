@@ -1,5 +1,7 @@
 package pl.twojekursy.config;
 
+import com.nimbusds.jose.jwk.source.ImmutableSecret;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -10,6 +12,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import pl.twojekursy.user.UserRole;
 
@@ -18,11 +22,8 @@ import pl.twojekursy.user.UserRole;
 //@EnableMethodSecurity
 public class SecurityConfig {
 
-    //zad  dom - Comments
-    // C - admin lub user
-    // R - public
-    // u - admin lub user
-    // Lista - public
+    @Value("${jwt.secret}")
+    private String secret;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -31,7 +32,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests()
 
-                .requestMatchers(HttpMethod.POST, "/api/users", "/api/posts/find")
+                .requestMatchers(HttpMethod.POST, "/api/authentication", "/api/users", "/api/posts/find")
                     .permitAll()
                 .requestMatchers(HttpMethod.GET,
                         "/api/posts/*", "/api/posts",
@@ -58,5 +59,10 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public JwtEncoder jwtEncoder(){
+        return new NimbusJwtEncoder(new ImmutableSecret<>(secret.getBytes()));
     }
 }
