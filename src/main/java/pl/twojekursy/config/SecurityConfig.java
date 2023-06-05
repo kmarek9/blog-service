@@ -9,13 +9,22 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import pl.twojekursy.authentication.JwtTokenToUsernameTokenConverter;
 import pl.twojekursy.user.UserRole;
+
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
 
 @Configuration
 @EnableWebSecurity
@@ -26,7 +35,7 @@ public class SecurityConfig {
     private String secret;
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, JwtTokenToUsernameTokenConverter converter) throws Exception {
         http
                 .csrf().disable()
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -47,7 +56,12 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
 
                 .and()
-                .httpBasic();
+                .oauth2ResourceServer(httpSecurityOAuth2ResourceServerConfigurer ->
+                        httpSecurityOAuth2ResourceServerConfigurer
+                                .jwt()
+                                .jwtAuthenticationConverter(converter))
+                //.httpBasic();
+        ;
         return http.build();
     }
 
@@ -64,5 +78,12 @@ public class SecurityConfig {
     @Bean
     public JwtEncoder jwtEncoder(){
         return new NimbusJwtEncoder(new ImmutableSecret<>(secret.getBytes()));
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder(){
+        SecretKey secretKey = new SecretKeySpec(
+                secret.getBytes(), "AES");
+        return NimbusJwtDecoder.withSecretKey(secretKey).build();
     }
 }

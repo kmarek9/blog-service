@@ -14,7 +14,7 @@ import java.time.Instant;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
-    private static final String JWT_CLAIM_LOGIN = "login";
+    static final String JWT_CLAIM_LOGIN = "login";
     private final AuthenticationManager authenticationManager;
 
     @Value("${jwt.expirationInSeconds:1800}")
